@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: typee-mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - typee-network
+
+  redis:
+    image: redis:alpine
+    container_name: typee-redis
+    restart: unless-stopped
+    networks:
+      - typee-network
+
+  wordpress:
+    build: .
+    container_name: typee-wordpress
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DEBUG: 1
+    volumes:
+      # Ánh xạ thư mục wp-content của bạn vào WordPress để Git có thể tracking plugin/theme
+      - ./wp-content:/var/www/html/wp-content
+    depends_on:
+      - db
+      - redis
+    networks:
+      - typee-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: typee-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - typee-network
+
+volumes:
+  db_data:
+
+networks:
+  typee-network:
+    driver: bridge

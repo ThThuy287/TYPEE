@@ -1,0 +1,33 @@
+# 1. Các file cấu hình môi trường (Bảo mật tuyệt đối)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# 2. Dữ liệu cục bộ của Docker (nếu có ánh xạ volume ra ngoài)
+/db_data/
+/mysql_data/
+/wp_data/
+
+# 3. Các thư mục sinh ra trong quá trình chạy WordPress
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/w3tc-config/
+
+# Bỏ qua file debug log của WordPress
+debug.log
+wp-config.php.swp
+
+# 4. Các thư viện Frontend (nếu dự án có biên dịch giao diện riêng)
+node_modules/
+.npm/
+npm-debug.log
+yarn-error.log
+
+# 5. File sinh ra từ Hệ điều hành & IDE
+.vscode/
+.DS_Store
+Thumbs.db
+ehthumbs.db

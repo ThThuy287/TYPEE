@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -15,6 +14,14 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - typee-network
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mysqladmin ping -h 127.0.0.1 -uroot -p"$${MYSQL_ROOT_PASSWORD}" --silent'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:alpine
@@ -35,13 +42,14 @@ services:
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-      WORDPRESS_DEBUG: 1
+      WORDPRESS_DEBUG: "0"
     volumes:
-      # Ánh xạ thư mục wp-content của bạn vào WordPress để Git có thể tracking plugin/theme
       - ./wp-content:/var/www/html/wp-content
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - typee-network
 
@@ -50,12 +58,13 @@ services:
     container_name: typee-phpmyadmin
     restart: unless-stopped
     ports:
-      - "8081:80" # Đã đổi từ 8080 sang 8081
+      - "8081:80"
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - typee-network
 

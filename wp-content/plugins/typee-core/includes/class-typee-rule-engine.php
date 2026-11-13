@@ -7,12 +7,6 @@ class TYPEE_Rule_Engine {
 
     /**
      * Kiểm tra tính hợp lệ của cấu hình
-     *
-     * @param int $kit_id
-     * @param int $switch_id
-     * @param int $keycap_id
-     * @param int $switch_pack_qty Số lượng pack switch khách chọn
-     * @return array
      */
     public static function validate_configuration($kit_id, $switch_id, $keycap_id, $switch_pack_qty = 0) {
         $is_valid = true;
@@ -38,12 +32,12 @@ class TYPEE_Rule_Engine {
             return ['is_valid' => false, 'errors' => ['Vui lòng chọn Kit bàn phím.']];
         }
 
-        // Cấp nhật tổng giá tạm thời
+        // Cập nhật tổng giá tạm thời
         $total_price += (float) $kit_product->get_price();
         if ($switch_product) $total_price += ((float) $switch_product->get_price() * $switch_pack_qty);
         if ($keycap_product) $total_price += (float) $keycap_product->get_price();
 
-        // 3. Lấy thông tin Taxonomy (EAV) thay vì ACF Meta
+        // 3. Lấy thông tin Taxonomy (EAV)
         $kit_layout_terms = wp_get_post_terms($kit_id, 'pa_layout', ['fields' => 'names']);
         $kit_pcb_terms    = wp_get_post_terms($kit_id, 'pa_pcb', ['fields' => 'names']);
         
@@ -65,7 +59,7 @@ class TYPEE_Rule_Engine {
         // --- RULE 2: KIỂM TRA SỐ LƯỢNG SWITCH (PACK = 35) ---
         if ($switch_product && $kit_layout) {
             $min_switches_needed = self::get_min_switches_needed($kit_layout);
-            $total_switches = $switch_pack_qty * 35; // Giả sử 1 pack có 35 switch
+            $total_switches = $switch_pack_qty * 35; 
 
             if ($total_switches < $min_switches_needed) {
                 $is_valid = false;
@@ -80,7 +74,6 @@ class TYPEE_Rule_Engine {
 
             $hard_layouts = ['65%', '75%', '96%', '98%'];
             if (in_array($kit_layout, $hard_layouts) && strpos($keycap_layout, '104 keys') !== false) {
-                // Ràng buộc mềm -> Cảnh báo
                 $warnings[] = "Cảnh báo: Bộ keycap này có thể thiếu nút Shift ngắn 1.75u hoặc phím Alt/Fn 1u cho layout {$kit_layout}.";
             }
         }
@@ -115,8 +108,3 @@ class TYPEE_Rule_Engine {
         }
     }
 }
-// Load Core Logic Rule Engine (Thủy)
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-typee-rule-engine.php';
-
-// Load REST API & WooCommerce Hooks (Lele - mở comment khi Lele tạo file xong)
-// require_once plugin_dir_path( __FILE__ ) . 'includes/class-builder-api.php';

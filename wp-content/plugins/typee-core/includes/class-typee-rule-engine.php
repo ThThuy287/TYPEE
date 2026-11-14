@@ -41,16 +41,15 @@ class TYPEE_Rule_Engine {
         $kit_layout_terms = wp_get_post_terms($kit_id, 'pa_layout', ['fields' => 'names']);
         $kit_pcb_terms    = wp_get_post_terms($kit_id, 'pa_pcb', ['fields' => 'names']);
         
-        $kit_layout = !empty($kit_layout_terms) ? $kit_layout_terms[0] : '';
-        $kit_pcb    = !empty($kit_pcb_terms) ? $kit_pcb_terms[0] : '';
+       // 3. Lấy thông tin thuộc tính từ ACF (khớp với file acf-typee-4-categories-updated.json)
+        $kit_layout = function_exists('get_field') ? get_field('attribute_layout', $kit_id) : '';
+        $kit_pcb    = function_exists('get_field') ? get_field('attribute_pcb', $kit_id) : '';
 
         // --- RULE 1: KIỂM TRA PIN CỦA SWITCH VÀ MẠCH KIT ---
         if ($switch_product) {
-            $switch_pin_terms = wp_get_post_terms($switch_id, 'pa_pin', ['fields' => 'names']);
-            $switch_pin = !empty($switch_pin_terms) ? $switch_pin_terms[0] : '';
+            $switch_pin = function_exists('get_field') ? get_field('attribute_pin', $switch_id) : '';
 
-            // Nếu mạch Kit là 3-pin mà cắm switch 5-pin -> BLOCK
-            if (strpos($kit_pcb, '3-pin') !== false && strpos($switch_pin, '5-pin') !== false && strpos($switch_pin, '3-pin') === false) {
+            if (strpos((string)$kit_pcb, '3-pin') !== false && strpos((string)$switch_pin, '5-pin') !== false && strpos((string)$switch_pin, '3-pin') === false) {
                 $is_valid = false;
                 $errors[] = "Kit mạch 3-pin không cắm vừa Switch 5-pin. Vui lòng chọn Switch 3-pin.";
             }
@@ -59,7 +58,7 @@ class TYPEE_Rule_Engine {
         // --- RULE 2: KIỂM TRA SỐ LƯỢNG SWITCH (PACK = 35) ---
         if ($switch_product && $kit_layout) {
             $min_switches_needed = self::get_min_switches_needed($kit_layout);
-            $total_switches = $switch_pack_qty * 35; 
+            $total_switches = $switch_pack_qty * 35;
 
             if ($total_switches < $min_switches_needed) {
                 $is_valid = false;
@@ -69,11 +68,11 @@ class TYPEE_Rule_Engine {
 
         // --- RULE 3: KIỂM TRA LAYOUT KEYCAP ---
         if ($keycap_product && $kit_layout) {
-            $keycap_layout_terms = wp_get_post_terms($keycap_id, 'pa_supported_layout', ['fields' => 'names']);
-            $keycap_layout = !empty($keycap_layout_terms) ? $keycap_layout_terms[0] : '';
+            $keycap_layouts = function_exists('get_field') ? get_field('attribute_supported_layout', $keycap_id) : [];
+            $keycap_layout_str = is_array($keycap_layouts) ? implode(', ', $keycap_layouts) : (string)$keycap_layouts;
 
             $hard_layouts = ['65%', '75%', '96%', '98%'];
-            if (in_array($kit_layout, $hard_layouts) && strpos($keycap_layout, '104 keys') !== false) {
+            if (in_array($kit_layout, $hard_layouts) && strpos($keycap_layout_str, '104 keys') !== false && strpos($keycap_layout_str, 'Full Kit') === false) {
                 $warnings[] = "Cảnh báo: Bộ keycap này có thể thiếu nút Shift ngắn 1.75u hoặc phím Alt/Fn 1u cho layout {$kit_layout}.";
             }
         }

@@ -16,3 +16,8 @@ $rule_engine_file = plugin_dir_path( __FILE__ ) . 'includes/class-typee-rule-eng
 if ( file_exists( $rule_engine_file ) ) {
     require_once $rule_engine_file;
 }
+// 2. Nạp REST API & WooCommerce Hooks (Lele)
+$builder_api_file = plugin_dir_path( __FILE__ ) . 'includes/class-builder-api.php';
+if ( file_exists( $builder_api_file ) ) {
+    require_once $builder_api_file;
+}

@@ -21,3 +21,12 @@ $builder_api_file = plugin_dir_path( __FILE__ ) . 'includes/class-builder-api.ph
 if ( file_exists( $builder_api_file ) ) {
     require_once $builder_api_file;
 }
+
+// 2. Nạp REST API & WooCommerce Hooks (Lele)
+$builder_api_file = plugin_dir_path( __FILE__ ) . 'includes/class-builder-api.php';
+if ( file_exists( $builder_api_file ) ) {
+    require_once $builder_api_file;
+    if (class_exists('TYPEE_Builder_API')) {
+        TYPEE_Builder_API::init(); 
+    }
+}

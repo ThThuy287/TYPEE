@@ -38,16 +38,17 @@ class TYPEE_Rule_Engine {
         if ($keycap_product) $total_price += (float) $keycap_product->get_price();
 
         // 3. Lấy thông tin Taxonomy (EAV)
-        $kit_layout_terms = wp_get_post_terms($kit_id, 'pa_layout', ['fields' => 'names']);
-        $kit_pcb_terms    = wp_get_post_terms($kit_id, 'pa_pcb', ['fields' => 'names']);
-        
-        $kit_layout = !empty($kit_layout_terms) ? $kit_layout_terms[0] : '';
-        $kit_pcb    = !empty($kit_pcb_terms) ? $kit_pcb_terms[0] : '';
+$kit_layout_terms = wp_get_post_terms($kit_id, 'pa_layout', ['fields' => 'names']);
+$kit_pcb_terms    = wp_get_post_terms($kit_id, 'pa_pcb', ['fields' => 'names']);
+
+// SỬA: Kiểm tra is_wp_error trước khi lấy phần tử mảng
+$kit_layout = (!is_wp_error($kit_layout_terms) && !empty($kit_layout_terms)) ? $kit_layout_terms[0] : '';
+$kit_pcb    = (!is_wp_error($kit_pcb_terms) && !empty($kit_pcb_terms)) ? $kit_pcb_terms[0] : '';
 
         // --- RULE 1: KIỂM TRA PIN CỦA SWITCH VÀ MẠCH KIT ---
         if ($switch_product) {
-            $switch_pin_terms = wp_get_post_terms($switch_id, 'pa_pin', ['fields' => 'names']);
-            $switch_pin = !empty($switch_pin_terms) ? $switch_pin_terms[0] : '';
+           $switch_pin_terms = wp_get_post_terms($switch_id, 'pa_pin', ['fields' => 'names']);
+$switch_pin = (!is_wp_error($switch_pin_terms) && !empty($switch_pin_terms)) ? $switch_pin_terms[0] : '';
 
             // Nếu mạch Kit là 3-pin mà cắm switch 5-pin -> BLOCK
             if (strpos($kit_pcb, '3-pin') !== false && strpos($switch_pin, '5-pin') !== false && strpos($switch_pin, '3-pin') === false) {
@@ -69,8 +70,8 @@ class TYPEE_Rule_Engine {
 
         // --- RULE 3: KIỂM TRA LAYOUT KEYCAP ---
         if ($keycap_product && $kit_layout) {
-            $keycap_layout_terms = wp_get_post_terms($keycap_id, 'pa_supported_layout', ['fields' => 'names']);
-            $keycap_layout = !empty($keycap_layout_terms) ? $keycap_layout_terms[0] : '';
+           $keycap_layout_terms = wp_get_post_terms($keycap_id, 'pa_supported_layout', ['fields' => 'names']);
+$keycap_layout = (!is_wp_error($keycap_layout_terms) && !empty($keycap_layout_terms)) ? $keycap_layout_terms[0] : '';
 
             $hard_layouts = ['65%', '75%', '96%', '98%'];
             if (in_array($kit_layout, $hard_layouts) && strpos($keycap_layout, '104 keys') !== false) {

@@ -70,6 +70,3 @@ class TYPEE_Builder_API {
         return $passed;
     }
 }
-
-// Khởi chạy Class
-TYPEE_Builder_API::init();

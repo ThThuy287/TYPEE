@@ -1,0 +1,68 @@
+/* ==========================================================================
+   TYPEE design tokens – lấy từ Figma "Giao diện" (frame Trang chủ, Header, Footer)
+   ========================================================================== */
+:root {
+	/* Màu thương hiệu */
+	--ty-accent: #ff5722;          /* Accent – nút chính, badge */
+	--ty-accent-strong: #b02f00;   /* Hover / chữ nhấn trên nền sáng */
+	--ty-accent-soft: rgba(255, 87, 34, 0.1);
+	--ty-accent-soft-2: rgba(255, 87, 34, 0.2);
+	--ty-peach: #ffdbd1;           /* Chữ nhấn trên nền tối */
+
+	/* Nền */
+	--ty-carbon: #303036;          /* Header, footer, section tối */
+	--ty-carbon-95: rgba(48, 48, 54, 0.95);
+	--ty-carbon-90: rgba(48, 48, 54, 0.9);
+	--ty-canvas: #fbf8ff;          /* Nền card / section sáng */
+	--ty-surface: #f5f2fb;         /* Nền section xen kẽ */
+	--ty-chip: #efecf5;            /* Chip thông số, nút phụ */
+	--ty-border: #e4e1e7;
+
+	/* Chữ */
+	--ty-ink: #1b1b21;             /* Tiêu đề */
+	--ty-muted: #5f5e63;           /* Nội dung */
+	--ty-on-dark: #f2eff8;
+	--ty-on-dark-90: rgba(242, 239, 248, 0.9);
+	--ty-on-dark-80: rgba(242, 239, 248, 0.8);
+	--ty-on-dark-70: rgba(242, 239, 248, 0.7);
+	--ty-on-dark-60: rgba(242, 239, 248, 0.6);
+	--ty-on-dark-50: rgba(242, 239, 248, 0.5);
+	--ty-line-dark: rgba(228, 225, 234, 0.1);
+	--ty-glass: rgba(228, 225, 234, 0.1);
+	--ty-glass-2: rgba(228, 225, 234, 0.2);
+
+	/* Trạng thái */
+	--ty-success: #059669;
+	--ty-online: #34d399;
+	--ty-brown-40: rgba(91, 64, 57, 0.4);
+
+	/* Typography */
+	--ty-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--ty-font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+
+	/* Bo góc */
+	--ty-r-xs: 2px;
+	--ty-r-sm: 4px;
+	--ty-r-md: 8px;
+	--ty-r-lg: 12px;
+	--ty-r-xl: 16px;
+
+	/* Bố cục */
+	--ty-container: 1440px;
+	--ty-gutter: 48px;
+	--ty-gap: 24px;
+
+	/* Bóng */
+	--ty-shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.05);
+	--ty-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+	--ty-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+	--ty-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	--ty-shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 1024px) {
+	:root { --ty-gutter: 24px; --ty-gap: 16px; }
+}
+@media (max-width: 640px) {
+	:root { --ty-gutter: 16px; }
+}

@@ -1,0 +1,105 @@
+/* Màn 02–03: Danh mục + Bộ lọc Off-Canvas (Figma 1:1600, 1:3768) */
+
+/* Ẩn khung mặc định của Flatsome trên trang danh mục để không chồng lên layout TYPEE */
+body.typee .shop-page-title, body.typee .category-page-row > .large-3, body.typee #shop-sidebar,
+body.typee .category-filtering, body.typee .woocommerce-breadcrumb { display: none !important; }
+body.typee .category-page-row { display: block; padding: 0; }
+body.typee .category-page-row > .col { max-width: 100%; flex-basis: 100%; padding: 0; }
+
+.ty-catalog { background: var(--ty-bg, #f7f8fa); padding-bottom: 64px; }
+
+/* Hero */
+.ty-cathero { background: var(--ty-white); border-bottom: 1px solid var(--ty-border); padding: 24px 0 20px; }
+.ty-cathero__row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 12px; }
+.ty-cathero__row > div { min-width: 0; }
+body.typee .ty-cathero__title { margin: 0; font-size: 32px; line-height: 40px; font-weight: 800; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ty-cathero__count { font-size: 12px; line-height: 18px; font-weight: 600; background: var(--ty-chip); color: var(--ty-muted); padding: 3px 10px; border-radius: var(--ty-r-badge); }
+.ty-cathero__desc { margin: 8px 0 0; color: var(--ty-muted); max-width: 720px; font-size: 15px; line-height: 24px; }
+.ty-cathero__ready { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--ty-accent-light, #fff3e0); color: var(--ty-ink); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.ty-cathero__ready .ty-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ty-success, #16a34a); display: inline-block; }
+.ty-cathero__quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.ty-cathero__quick .ty-pill small { opacity: .65; font-weight: 500; margin-left: 2px; }
+
+/* Thanh công cụ */
+.ty-cattools { background: var(--ty-white); border-bottom: 1px solid var(--ty-border); }
+.ty-cattools__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; padding-bottom: 12px; }
+.ty-cattools__left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+.ty-cattools__right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+body.typee .ty-cattools__filter { gap: 8px; min-height: var(--ty-tap); margin: 0; }
+.ty-cattools__n { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--ty-accent); color: #fff; font-size: 11px; font-weight: 700; }
+body.typee .ty-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px 0 12px; border-radius: 999px; background: var(--ty-accent-light, #fff3e0); color: var(--ty-ink); font-size: 13px; text-decoration: none; border: 1px solid transparent; white-space: nowrap; max-width: 100%; }
+body.typee .ty-chip:hover { border-color: var(--ty-accent); color: var(--ty-ink); }
+.ty-chip strong { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+body.typee .ty-cattools__clear { font-size: 13px; font-weight: 600; color: var(--ty-accent); padding: 6px 4px; }
+body.typee .ty-cattools .woocommerce-result-count { margin: 0; font-size: 13px; color: var(--ty-muted); white-space: nowrap; }
+body.typee .ty-cattools .woocommerce-ordering { margin: 0; }
+body.typee .ty-cattools .woocommerce-ordering select {
+	margin: 0; height: 40px; min-width: 200px; padding: 0 36px 0 12px; border: 1px solid var(--ty-border); border-radius: var(--ty-r-btn);
+	background-color: var(--ty-white); font-size: 14px; color: var(--ty-ink); box-shadow: none;
+}
+
+/* Lưới */
+.ty-catalog__body { padding-top: 28px; }
+.ty-catalog__grid { margin-bottom: 32px; }
+body.typee .ty-catalog .woocommerce-pagination { display: flex; justify-content: center; margin: 8px 0 0; }
+body.typee .ty-catalog .woocommerce-pagination ul,
+body.typee .ty-catalog ul.page-numbers { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; list-style: none; margin: 0; padding: 0; border: 0; }
+body.typee .ty-catalog .page-numbers li { margin: 0; border: 0; }
+body.typee .ty-catalog .page-numbers a, body.typee .ty-catalog .page-numbers span {
+	display: inline-flex; align-items: center; justify-content: center; min-width: var(--ty-tap); height: var(--ty-tap); padding: 0 12px;
+	border-radius: var(--ty-r-btn); border: 1px solid var(--ty-border); background: var(--ty-white); color: var(--ty-ink); font-weight: 600; line-height: 1;
+}
+body.typee .ty-catalog .page-numbers a:hover { border-color: var(--ty-accent); color: var(--ty-accent); }
+body.typee .ty-catalog .page-numbers .current { background: var(--ty-carbon); border-color: var(--ty-carbon); color: #fff; }
+
+/* Cam kết */
+.ty-promises { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ty-gap, 24px); margin-top: 48px; }
+.ty-promise { background: var(--ty-white); border: 1px solid var(--ty-border); border-radius: var(--ty-r-card); padding: 20px; }
+.ty-promise__ic { width: 40px; height: 40px; border-radius: var(--ty-r-btn); display: inline-flex; align-items: center; justify-content: center; background: var(--ty-accent-light, #fff3e0); color: var(--ty-accent); }
+body.typee .ty-promise h3 { margin: 12px 0 6px; font-size: 15px; line-height: 22px; }
+.ty-promise p { margin: 0; font-size: 13px; line-height: 20px; color: var(--ty-muted); }
+
+/* Drawer bộ lọc */
+.ty-filter__form { display: flex; flex-direction: column; height: 100%; margin: 0; }
+.ty-filter__head { align-items: flex-start; }
+body.typee .ty-filter .ty-drawer__title { display: flex; align-items: center; gap: 8px; margin: 0; }
+.ty-filter__sub { display: block; font-size: 12px; color: var(--ty-muted); margin-top: 2px; }
+.ty-filter__head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+body.typee .ty-filter__reset { margin: 0; min-height: 36px; padding: 0 10px; border: 0; background: none; color: var(--ty-accent); font-weight: 600; font-size: 13px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.ty-fgroup { border: 0; margin: 0 0 20px; padding: 0 0 16px; border-bottom: 1px solid var(--ty-chip); min-width: 0; }
+.ty-fgroup:last-child { border-bottom: 0; margin-bottom: 0; }
+body.typee .ty-fgroup legend { font-family: var(--ty-font-head, inherit); font-weight: 700; font-size: 14px; color: var(--ty-ink); margin: 0 0 6px; padding: 0; text-transform: none; }
+body.typee .ty-fopt { min-height: 40px; margin: 0; font-weight: 400; }
+.ty-fopt__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ty-fopt__count { color: var(--ty-muted); font-size: 12px; flex-shrink: 0; }
+.ty-fprice { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ty-fprice label { display: flex; flex-direction: column; gap: 4px; margin: 0; font-size: 12px; color: var(--ty-muted); font-weight: 500; }
+body.typee .ty-fprice .ty-input { margin: 0; height: var(--ty-tap); width: 100%; }
+body.typee .ty-filter__apply { width: 100%; min-height: 48px; gap: 8px; margin: 0; }
+
+/* Responsive */
+@media (max-width: 1023px) {
+	.ty-promises { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.ty-cattools__inner { flex-wrap: wrap; }
+	.ty-cattools__right { width: 100%; justify-content: space-between; }
+}
+@media (max-width: 767px) {
+	.ty-cathero__row { flex-direction: column; align-items: flex-start; gap: 12px; }
+	body.typee .ty-cathero__title { font-size: 26px; line-height: 32px; }
+	.ty-cathero__quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; }
+	.ty-cathero__quick .ty-pill { flex-shrink: 0; }
+	body.typee .ty-cattools .woocommerce-ordering select { min-width: 0; width: 100%; }
+	.ty-cattools__right { flex-direction: column; align-items: stretch; gap: 8px; }
+	.ty-cattools__right .woocommerce-ordering { width: 100%; }
+	.ty-promises { grid-template-columns: 1fr; }
+}
+
+/* Đang tải trang kết quả mới */
+body.ty-is-loading::before {
+	content: ""; position: fixed; z-index: 100000; top: 0; left: 0; height: 3px; width: 40%;
+	background: var(--ty-accent); animation: ty-progress 1.2s ease-in-out infinite;
+}
+body.ty-is-loading .ty-catalog__body { opacity: .5; pointer-events: none; transition: opacity .2s; }
+body.ty-is-loading .ty-cattools__filter, body.ty-is-loading .ty-filter__apply { cursor: progress; }
+@keyframes ty-progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+@media (prefers-reduced-motion: reduce) { body.ty-is-loading::before { animation: none; width: 100%; } }

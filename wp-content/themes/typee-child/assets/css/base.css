@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Base – ghi đè nền tảng Flatsome trong phạm vi body.typee
+   ========================================================================== */
+body.typee {
+	font-family: var(--ty-font-body);
+	color: var(--ty-muted);
+	background: var(--ty-canvas);
+	-webkit-font-smoothing: antialiased;
+}
+body.typee h1, body.typee h2, body.typee h3, body.typee h4,
+body.typee .ty-display {
+	font-family: var(--ty-font-display);
+	color: var(--ty-ink);
+	font-weight: 700;
+	margin: 0;
+}
+/* :where() giữ độ ưu tiên thấp để class của component (vd .ty-nav__link) luôn thắng */
+:where(body.typee) p { margin: 0; }
+:where(body.typee) a { color: inherit; text-decoration: none; }
+:where(body.typee) img { max-width: 100%; height: auto; }
+body.typee #main { background: var(--ty-canvas); }
+
+/* Thuộc tính hidden luôn thắng các rule display của component */
+body.typee [hidden] { display: none !important; }
+
+.ty-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+
+.ty-container {
+	width: 100%;
+	max-width: var(--ty-container);
+	margin: 0 auto;
+	padding-left: var(--ty-gutter);
+	padding-right: var(--ty-gutter);
+	box-sizing: border-box;
+}
+
+.ty-sr {
+	position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px); white-space: nowrap;
+}
+
+/* Nút */
+.ty-btn {
+	display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+	border-radius: var(--ty-r-btn); border: 0; cursor: pointer; min-height: var(--ty-tap);
+	font-family: var(--ty-font-body); font-weight: 700; font-size: 14px; line-height: 20px;
+	letter-spacing: 0.14px; padding: 12px 24px; text-transform: none; margin: 0;
+	transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
+	min-height: 0;
+}
+body.typee .ty-btn--primary { background: var(--ty-accent); color: #fff; box-shadow: var(--ty-shadow-lg); }
+body.typee .ty-btn--primary:hover { background: var(--ty-accent-hover); color: #fff; }
+body.typee .ty-btn--glass { background: rgba(228, 225, 234, 0.15); color: var(--ty-on-dark); font-weight: 600; }
+body.typee .ty-btn--glass:hover { background: rgba(228, 225, 234, 0.25); }
+body.typee .ty-btn--soft { background: var(--ty-chip); color: var(--ty-ink); }
+body.typee .ty-btn--soft:hover { background: var(--ty-border); }
+
+/* Tiêu đề section (eyebrow + h2 + mô tả) */
+.ty-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.ty-section-head__main { display: flex; flex-direction: column; gap: 4px; }
+.ty-eyebrow {
+	display: inline-flex; align-items: center; gap: 8px;
+	font-weight: 700; font-size: 13px; line-height: 18px; letter-spacing: 1.3px;
+	text-transform: uppercase; color: var(--ty-accent-strong);
+}
+body.typee .ty-h2 { font-size: 32px; line-height: 40px; letter-spacing: -0.64px; }
+.ty-section-head__desc { font-size: 14px; line-height: 22px; color: var(--ty-muted); }
+.ty-more {
+	display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+	font-weight: 600; font-size: 14px; line-height: 20px; letter-spacing: 0.14px; color: var(--ty-accent-strong);
+}
+.ty-more:hover { text-decoration: underline; }
+
+.is-disabled { cursor: default; opacity: .7; }
+
+/* Focus rõ ràng cho bàn phím (PRD NFR-06) */
+body.typee :is(a, button, input, select, textarea, [tabindex]):focus-visible { outline: none; box-shadow: var(--ty-focus); }
+
+/* Font kỹ thuật cho SKU / mã đơn / mã RMA (PRD §7) */
+.ty-mono { font-family: var(--ty-font-mono); letter-spacing: 0; }
+
+/* Container rộng cho Builder & Compare (PRD NFR-04) */
+.ty-container--wide { max-width: var(--ty-container-wide); }
+
+@media (max-width: 768px) {
+	.ty-section-head { flex-direction: column; align-items: flex-start; }
+	body.typee .ty-h2 { font-size: 26px; line-height: 32px; }
+}

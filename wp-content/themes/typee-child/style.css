@@ -1,0 +1,12 @@
+/*
+Theme Name:   TYPEE Child
+Theme URI:    https://github.com/ThThuy287/TYPEE
+Description:  Giao diện frontend TYPEE (bám theo Figma "Giao diện") – child theme của Flatsome. Chỉ thay đổi giao diện, không chỉnh sửa dữ liệu hay logic backend.
+Author:       Nhóm TYPEE - UIT
+Template:     flatsome
+Version:      0.1.0
+Text Domain:  typee-child
+Requires PHP: 7.4
+*/
+
+/* Toàn bộ CSS nằm trong assets/css/ và được nạp qua functions.php */

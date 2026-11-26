@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Footer – Figma 1:663
+   ========================================================================== */
+.ty-footer { background: var(--ty-carbon); color: var(--ty-on-dark-80); font-family: var(--ty-font-body); }
+.ty-footer .ty-container { padding-top: 40px; padding-bottom: 40px; display: flex; flex-direction: column; gap: 40px; }
+.ty-footer__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.ty-footer__col { display: flex; flex-direction: column; gap: 16px; }
+.ty-footer__brand { font-family: var(--ty-font-display); font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.09px; color: var(--ty-on-dark); }
+.ty-footer__desc { font-size: 14px; line-height: 22px; color: var(--ty-on-dark-80); }
+.ty-footer__contact, .ty-footer__list, .ty-footer__policy { list-style: none; margin: 0; padding: 0; }
+.ty-footer__contact { display: flex; flex-direction: column; gap: 4px; }
+.ty-footer__contact li { margin: 0; font-size: 12px; line-height: 18px; color: var(--ty-on-dark-70); }
+.ty-footer__contact strong { color: var(--ty-on-dark); font-weight: 700; }
+body.typee .ty-footer__title {
+	font-family: var(--ty-font-display); font-weight: 700; font-size: 18px; line-height: 26px;
+	letter-spacing: 0.9px; text-transform: uppercase; color: var(--ty-peach);
+}
+.ty-footer__list { display: flex; flex-direction: column; gap: 8px; }
+.ty-footer__list li { margin: 0; font-size: 14px; line-height: 22px; color: var(--ty-on-dark-80); }
+.ty-footer__list a:hover { color: #fff; }
+.ty-footer__policy { display: flex; flex-direction: column; gap: 7.5px; }
+.ty-footer__policy li { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 18px; color: var(--ty-on-dark-80); }
+.ty-footer__policy .ty-icon { color: var(--ty-accent); }
+.ty-footer__pay { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.ty-footer__pay-title { font-weight: 600; font-size: 11px; line-height: 14px; letter-spacing: 0.66px; text-transform: uppercase; color: var(--ty-on-dark-60); }
+.ty-footer__pay-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.ty-footer__pay-chip { background: rgba(251, 248, 255, 0.1); border-radius: var(--ty-r-badge); padding: 4px 10px; font-weight: 500; font-size: 13px; line-height: 18px; letter-spacing: 0.26px; color: var(--ty-on-dark); }
+.ty-footer__bottom {
+	border-top: 1px solid rgba(228, 225, 234, 0.2); padding-top: 25px;
+	display: flex; align-items: center; justify-content: space-between; gap: 16px;
+	font-size: 12px; line-height: 18px; color: var(--ty-on-dark-60);
+}
+.ty-footer__legal { display: flex; gap: 16px; }
+.ty-footer__legal a:hover { color: #fff; }
+
+@media (max-width: 960px) {
+	.ty-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+	.ty-footer__grid { grid-template-columns: 1fr; }
+	.ty-footer__bottom { flex-direction: column; align-items: flex-start; }
+}

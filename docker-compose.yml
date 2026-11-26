@@ -44,7 +44,12 @@ services:
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_DEBUG: "0"
     volumes:
-      - ./wp-content:/var/www/html/wp-content
+      # Chỉ nối những thư mục nhóm tự viết/sửa. Plugin & theme bên thứ ba nằm sẵn trong image (xem Dockerfile).
+      - ./wp-content/themes/typee-child:/var/www/html/wp-content/themes/typee-child
+      - ./wp-content/plugins/typee-core:/var/www/html/wp-content/plugins/typee-core
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./wp-content/fonts:/var/www/html/wp-content/fonts
     depends_on:
       db:
         condition: service_healthy

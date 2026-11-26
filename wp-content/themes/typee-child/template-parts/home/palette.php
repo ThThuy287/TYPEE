@@ -8,14 +8,14 @@
 defined( 'ABSPATH' ) || exit;
 
 $swatches = array(
-	array( '#FF5722', 'Accent', 'var(--ty-accent)', true ),
-	array( '#E64A19', 'Hover', 'var(--ty-accent-strong)', true ),
-	array( '#1E1E24', 'Tiêu đề', 'var(--ty-ink)', false ),
-	array( '#4A4A55', 'Nội dung', 'var(--ty-muted)', false ),
-	array( '#E2E4E9', 'Khung viền', 'var(--ty-border)', false ),
-	array( '#F5F5F7', 'Bề mặt', 'var(--ty-chip)', false ),
-	array( '#FFFFFF', 'Nền Canvas', '#fff', true ),
-	array( '#141418', 'Carbon Tối', 'var(--ty-carbon)', false ),
+	array( '#FF5722', 'Kinetic Accent', 'var(--ty-accent)', true ),
+	array( '#F4511E', 'Hover', 'var(--ty-accent-hover)', true ),
+	array( '#FFF3E0', 'Nền nhạt', 'var(--ty-accent-light)', true ),
+	array( '#0F1117', 'Surface Dark', 'var(--ty-carbon)', false ),
+	array( '#1A202C', 'Card tối', 'var(--ty-carbon-card)', false ),
+	array( '#FBF8FF', 'Surface Light', 'var(--ty-canvas)', true ),
+	array( '#10B981', 'Success', 'var(--ty-success)', false ),
+	array( '#3B82F6', 'Studio Info', 'var(--ty-info)', false ),
 );
 ?>
 <section class="ty-palette" data-node="1:5">
@@ -24,7 +24,7 @@ $swatches = array(
 			<span class="ty-palette__ic"><?php typee_the_icon( 'palette', 18 ); ?></span>
 			<div>
 				<div class="ty-palette__eyebrow">HỆ MÀU STUDIO</div>
-				<div class="ty-palette__name">Blocksy Mechanical<br>Palette v3.0</div>
+				<div class="ty-palette__name">Kinetic Precision<br>Design Tokens</div>
 			</div>
 		</div>
 		<ul class="ty-palette__list">

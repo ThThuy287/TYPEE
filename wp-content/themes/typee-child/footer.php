@@ -47,10 +47,10 @@ $cats = get_terms(
 				<h3 class="ty-footer__title">HỖ TRỢ KHÁCH HÀNG</h3>
 				<ul class="ty-footer__list">
 					<li><?php typee_link( 'tracking', 'Tra cứu đơn hàng tự động' ); ?></li>
-					<li><?php typee_link( 'faq', 'Hướng dẫn chọn linh kiện cho Newbie' ); ?></li>
-					<li><?php typee_link( 'warranty', 'Gửi yêu cầu Bảo hành & Đổi trả (RMA)' ); ?></li>
-					<li><?php typee_link( 'blog', 'Soundtest Center' ); ?></li>
-					<li><?php typee_link( 'blog', 'Quy trình Mod & Lube switch tiêu chuẩn' ); ?></li>
+					<li><?php typee_link( 'guides', 'Hướng dẫn chọn linh kiện cho Newbie' ); ?></li>
+					<li><?php typee_link( 'rma_new', 'Gửi yêu cầu Bảo hành & Đổi trả (e-RMA)' ); ?></li>
+					<li><?php typee_link( 'guides', 'Cẩm nang Modding Wiki DIY' ); ?></li>
+					<li><?php typee_link( 'warranty', 'Chính sách bảo hành & đổi trả' ); ?></li>
 				</ul>
 			</div>
 

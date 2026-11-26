@@ -9,18 +9,27 @@
 defined( 'ABSPATH' ) || exit;
 
 $hero = null;
-$pick = wc_get_products( array( 'status' => 'publish', 'featured' => true, 'limit' => 1 ) );
-if ( ! $pick ) {
-	$pick = wc_get_products(
-		array(
-			'status'   => 'publish',
-			'limit'    => 1,
-			'category' => array( 'pre-built' ),
-			'orderby'  => 'date',
-			'order'    => 'DESC',
-		)
-	);
-}
+$pick = typee_products_by_ids(
+	typee_cached_ids(
+		'hero',
+		function () {
+			$ids = wc_get_products( array( 'status' => 'publish', 'featured' => true, 'limit' => 1, 'return' => 'ids' ) );
+			if ( ! $ids ) {
+				$ids = wc_get_products(
+					array(
+						'status'   => 'publish',
+						'limit'    => 1,
+						'category' => array( 'pre-built' ),
+						'orderby'  => 'date',
+						'order'    => 'DESC',
+						'return'   => 'ids',
+					)
+				);
+			}
+			return $ids;
+		}
+	)
+);
 $hero  = $pick ? $pick[0] : null;
 $specs = $hero ? array_slice( typee_product_specs( $hero ), 0, 4 ) : array();
 $count = (int) wp_count_posts( 'product' )->publish;
@@ -37,7 +46,7 @@ $tag_pos   = array( 'is-tl', 'is-tr', 'is-bl', 'is-br' );
 				<span class="ty-dot"></span>
 				<span class="ty-hero__pill-strong">TYPEE STUDIO EDITION V3.4</span>
 				<span class="ty-hero__pill-sep" aria-hidden="true">|</span>
-				<span>Âm thanh Thocky &amp; Clacky Đỉnh Cao</span>
+				<span>Xưởng cơ khí số – Digital Crafting Lab</span>
 			</div>
 			<h1 class="ty-hero__title">
 				STUDIO BÀN PHÍM CƠ <span class="ty-grad">&amp;</span><br>
@@ -58,11 +67,9 @@ $tag_pos   = array( 'is-tl', 'is-tr', 'is-bl', 'is-br' );
 						<?php typee_the_icon( 'tune', 15 ); ?> Ráp phím ngay (Custom Builder) <?php typee_the_icon( 'arrow_forward', 12 ); ?>
 					</a>
 				<?php endif; ?>
-				<?php if ( typee_url( 'blog' ) ) : ?>
-					<a class="ty-btn ty-btn--glass" href="<?php echo esc_url( typee_url( 'blog' ) ); ?>">
-						<?php typee_the_icon( 'play_circle', 18 ); ?> Nghe Soundtest mẫu <span class="ty-hero__khz">96kHz</span>
-					</a>
-				<?php endif; ?>
+				<a class="ty-btn ty-btn--glass" href="<?php echo esc_url( typee_url( 'compare' ) ); ?>">
+					<?php typee_the_icon( 'compare_arrows', 18 ); ?> So sánh linh kiện <span class="ty-hero__khz">4 cột</span>
+				</a>
 			</div>
 			<ul class="ty-hero__trust">
 				<li><span class="ty-hero__trust-ic"><?php typee_the_icon( 'handyman', 14 ); ?></span>Cân Lube Stab<br>Free</li>
@@ -89,7 +96,7 @@ $tag_pos   = array( 'is-tl', 'is-tr', 'is-bl', 'is-br' );
 				</a>
 				<div class="ty-hero__now">
 					<div class="ty-hero__now-main">
-						<span class="ty-hero__now-ic"><?php typee_the_icon( 'graphic_eq', 16 ); ?></span>
+						<span class="ty-hero__now-ic"><?php typee_the_icon( 'keyboard', 16 ); ?></span>
 						<div>
 							<a class="ty-hero__now-title" href="<?php echo esc_url( $hero->get_permalink() ); ?>"><?php echo esc_html( $hero->get_name() ); ?></a>
 							<div class="ty-hero__now-sub">
@@ -106,11 +113,7 @@ $tag_pos   = array( 'is-tl', 'is-tr', 'is-bl', 'is-br' );
 							</div>
 						</div>
 					</div>
-					<div class="ty-bars" aria-hidden="true">
-						<?php foreach ( array( 12, 24, 16, 20, 8, 16, 24, 12 ) as $h ) : ?>
-							<span style="height:<?php echo (int) $h; ?>px"></span>
-						<?php endforeach; ?>
-					</div>
+					<a class="ty-hero__now-cta" href="<?php echo esc_url( $hero->get_permalink() ); ?>">Xem chi tiết <?php typee_the_icon( 'arrow_forward', 14 ); ?></a>
 				</div>
 			</div>
 		<?php endif; ?>

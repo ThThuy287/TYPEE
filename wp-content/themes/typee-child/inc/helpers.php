@@ -20,7 +20,7 @@ function typee_icon( $name, $size = 16, $class = '' ) {
 	$name = sanitize_file_name( $name );
 	if ( ! isset( $cache[ $name ] ) ) {
 		$file           = TYPEE_CHILD_DIR . '/assets/icons/' . $name . '.svg';
-		$cache[ $name ] = file_exists( $file ) ? file_get_contents( $file ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$cache[ $name ] = file_exists( $file ) ? preg_replace( '#<metadata>.*?</metadata>#s', '', file_get_contents( $file ) ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions
 	}
 	if ( '' === $cache[ $name ] ) {
 		return '';
@@ -78,12 +78,18 @@ function typee_url( $key ) {
 			'kit'        => $cat( 'kit' ),
 			'switch'     => $cat( 'switch' ),
 			'keycap'     => $cat( 'keycap' ),
-			'builder'    => home_url( '/custom-builder/' ),
-			'compare'    => home_url( '/so-sanh/' ),
-			'tracking'   => home_url( '/tra-cuu-don-hang/' ),
-			'blog'       => get_option( 'page_for_posts' ) ? get_permalink( get_option( 'page_for_posts' ) ) : '',
-			'faq'        => $page( 'faq' ),
-			'warranty'   => $page( 'hoan-tien-tra-hang' ),
+			// Route theo PRD §3 (đăng ký trong inc/routes.php, không tạo trang trong DB).
+			'catalog'      => home_url( '/catalog/' ),
+			'builder'      => home_url( '/builder/' ),
+			'compare'      => home_url( '/compare/' ),
+			'tracking'     => home_url( '/tracking-rma/' ),
+			'rma_new'      => home_url( '/rma/new-ticket/' ),
+			'warranty'     => home_url( '/chinh-sach-bao-hanh/' ),
+			'guides'       => home_url( '/modding-guides/' ),
+			'search'       => home_url( '/search/' ),
+			'saved_builds' => function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'saved-builds' ) : '',
+			'blog'         => home_url( '/modding-guides/' ),
+			'faq'          => home_url( '/modding-guides/' ),
 			'privacy'    => get_privacy_policy_url(),
 			'terms'      => function_exists( 'wc_terms_and_conditions_page_id' ) && wc_terms_and_conditions_page_id() ? get_permalink( wc_terms_and_conditions_page_id() ) : '',
 		);
@@ -139,3 +145,47 @@ function typee_copy( $key ) {
 	}
 	return isset( $copy[ $key ] ) ? $copy[ $key ] : '';
 }
+
+/**
+ * Cache danh sách ID (Redis object cache) cho các khối chạy trên mọi trang: gợi ý tìm kiếm, hero, ưu đãi…
+ * Tự làm mới khi có sản phẩm được lưu/xóa (đổi số phiên bản trong cache, không ghi DB).
+ *
+ * @param string   $key Khóa.
+ * @param callable $cb  Hàm trả về mảng ID.
+ * @param int      $ttl Giây.
+ * @return int[]
+ */
+function typee_cached_ids( $key, $cb, $ttl = 600 ) {
+	$ver = (int) wp_cache_get( 'ver', 'typee' );
+	$k   = $key . '_v' . $ver;
+	$ids = wp_cache_get( $k, 'typee' );
+	if ( false === $ids ) {
+		$ids = array_values( array_map( 'intval', (array) call_user_func( $cb ) ) );
+		wp_cache_set( $k, $ids, 'typee', $ttl );
+	}
+	return $ids;
+}
+
+/**
+ * Lấy sản phẩm theo danh sách ID đã cache (giữ thứ tự, bỏ sản phẩm không còn).
+ *
+ * @param int[] $ids ID.
+ * @return WC_Product[]
+ */
+function typee_products_by_ids( $ids ) {
+	if ( $ids && function_exists( '_prime_post_caches' ) ) {
+		_prime_post_caches( $ids, false, true );
+	}
+	return array_values( array_filter( array_map( 'wc_get_product', $ids ) ) );
+}
+
+function typee_bump_cache_ver() {
+	wp_cache_set( 'ver', (int) wp_cache_get( 'ver', 'typee' ) + 1, 'typee' );
+}
+add_action( 'woocommerce_update_product', 'typee_bump_cache_ver' );
+add_action( 'woocommerce_new_product', 'typee_bump_cache_ver' );
+add_action( 'before_delete_post', function ( $id ) {
+	if ( 'product' === get_post_type( $id ) ) {
+		typee_bump_cache_ver();
+	}
+} );

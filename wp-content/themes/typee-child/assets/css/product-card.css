@@ -5,19 +5,19 @@
 
 .ty-card {
 	position: relative; display: flex; flex-direction: column; justify-content: space-between;
-	background: var(--ty-canvas); border-radius: var(--ty-r-md); padding: 16px;
+	background: var(--ty-white); border-radius: var(--ty-r-card); padding: 16px; border: 1px solid var(--ty-border);
 	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
 	font-family: var(--ty-font-body); min-width: 0;
 }
 .ty-card__body { display: flex; flex-direction: column; gap: 4px; position: relative; }
 .ty-card__media {
-	position: relative; display: block; overflow: hidden; border-radius: var(--ty-r-xs);
+	position: relative; display: block; overflow: hidden; border-radius: var(--ty-r-btn);
 	background: var(--ty-surface); aspect-ratio: 3 / 2;
 }
 body.typee .ty-card__img, .ty-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
 .ty-card:hover .ty-card__media img { transform: scale(1.03); }
 .ty-card__badge {
-	position: absolute; left: 10px; top: 10px; border-radius: var(--ty-r-xs); padding: 2px 8px;
+	position: absolute; left: 10px; top: 10px; border-radius: var(--ty-r-badge); padding: 2px 8px;
 	font-weight: 700; font-size: 11px; line-height: 16.5px; color: #fff;
 }
 .ty-card__badge--sale { background: var(--ty-accent); }
@@ -25,7 +25,7 @@ body.typee .ty-card__img, .ty-card__media img { width: 100%; height: 100%; objec
 
 body.typee .ty-card__fav {
 	position: absolute; right: 10px; top: 10px; z-index: 2; margin: 0; padding: 0; min-height: 0;
-	width: 32px; height: 32px; border-radius: var(--ty-r-lg); border: 0; cursor: pointer;
+	width: 36px; height: 36px; border-radius: var(--ty-r-lg); border: 0; cursor: pointer;
 	display: inline-flex; align-items: center; justify-content: center;
 	background: rgba(251, 248, 255, 0.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); color: var(--ty-ink);
@@ -33,9 +33,9 @@ body.typee .ty-card__fav {
 body.typee .ty-card__fav[aria-pressed="true"] { color: var(--ty-accent); }
 
 .ty-card__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; font-size: 13px; line-height: 18px; letter-spacing: 0.26px; }
-.ty-card__sku { color: var(--ty-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ty-card__sku { color: var(--ty-muted); font-weight: 500; font-family: var(--ty-font-mono); font-size: 12px; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ty-card__stock { font-weight: 600; white-space: nowrap; }
-.ty-card__stock.is-in { color: var(--ty-success); }
+.ty-card__stock.is-in { color: var(--ty-success-text); }
 .ty-card__stock.is-low, .ty-card__stock.is-backorder { color: var(--ty-accent-strong); }
 .ty-card__stock.is-out { color: var(--ty-muted); }
 
@@ -44,7 +44,7 @@ body.typee .ty-card__title { font-family: var(--ty-font-display); font-weight: 7
 .ty-card__title a:hover { color: var(--ty-accent-strong); }
 
 .ty-card__specs { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; margin: 0; padding: 4px 0 0; min-height: 48px; align-content: flex-start; }
-.ty-card__specs li { margin: 0; background: var(--ty-chip); color: var(--ty-muted); border-radius: var(--ty-r-xs); padding: 2px 8px; font-size: 10px; line-height: 15px; white-space: nowrap; max-width: 100%; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
+.ty-card__specs li { margin: 0; background: var(--ty-chip); color: var(--ty-muted); border-radius: var(--ty-r-badge); padding: 2px 8px; font-size: 10px; line-height: 15px; white-space: nowrap; max-width: 100%; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
 
 .ty-card__price { display: flex; align-items: baseline; gap: 8px; padding-top: 4px; white-space: nowrap; }
 .ty-card__now { font-family: var(--ty-font-display); font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.09px; color: var(--ty-ink); }
@@ -56,18 +56,18 @@ body.typee .ty-card__title { font-family: var(--ty-font-display); font-weight: 7
 	display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
 }
 body.typee .ty-card__cart {
-	grid-column: span 4; margin: 0; min-height: 0; height: 38px;
+	grid-column: span 4; margin: 0; min-height: 0; height: var(--ty-tap);
 	display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-	background: var(--ty-accent); color: #fff; border: 0; border-radius: var(--ty-r-xs);
+	background: var(--ty-accent); color: #fff; border: 0; border-radius: var(--ty-r-btn);
 	font-weight: 700; font-size: 12px; line-height: 16px; letter-spacing: 0.48px; text-transform: none;
 	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05)); padding: 0 8px; white-space: nowrap; overflow: hidden;
 }
-body.typee .ty-card__cart:hover { background: var(--ty-accent-strong); color: #fff; }
+body.typee .ty-card__cart:hover { background: var(--ty-accent-hover); color: #fff; }
 body.typee .ty-card__cart.loading { opacity: .7; }
 body.typee .ty-card__cart.added::after { display: none; }
 body.typee .ty-card + .added_to_cart, body.typee .ty-card__actions .added_to_cart { display: none; }
 body.typee .ty-card__compare {
-	margin: 0; min-height: 0; height: 38px; padding: 0; border: 0; border-radius: var(--ty-r-xs); cursor: pointer;
+	margin: 0; min-height: 0; height: var(--ty-tap); padding: 0; border: 0; border-radius: var(--ty-r-btn); cursor: pointer;
 	display: inline-flex; align-items: center; justify-content: center; background: var(--ty-chip); color: var(--ty-ink);
 }
 body.typee .ty-card__compare[aria-pressed="true"] { background: var(--ty-accent-soft-2); color: var(--ty-accent-strong); }

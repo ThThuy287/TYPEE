@@ -73,6 +73,7 @@ function typee_product_group( $product ) {
  * @param WC_Product|int $product Sản phẩm.
  */
 function typee_product_specs( $product ) {
+	static $labels = array(); // Nhãn ACF giống nhau cho mọi sản phẩm → tra một lần mỗi request.
 	$product = wc_get_product( $product );
 	if ( ! $product ) {
 		return array();
@@ -94,13 +95,16 @@ function typee_product_specs( $product ) {
 		if ( '' === $value ) {
 			continue;
 		}
-		$label = $fallback_label;
-		if ( function_exists( 'get_field_object' ) ) {
-			$obj = get_field_object( $key, $id, false, false );
-			if ( is_array( $obj ) && ! empty( $obj['label'] ) ) {
-				$label = $obj['label'];
+		if ( ! isset( $labels[ $key ] ) ) {
+			$labels[ $key ] = $fallback_label;
+			if ( function_exists( 'get_field_object' ) ) {
+				$obj = get_field_object( $key, $id, false, false );
+				if ( is_array( $obj ) && ! empty( $obj['label'] ) ) {
+					$labels[ $key ] = $obj['label'];
+				}
 			}
 		}
+		$label = $labels[ $key ];
 		$out[] = array(
 			'key'   => $key,
 			'label' => $label,
@@ -168,7 +172,7 @@ function typee_discount_percent( $product ) {
  */
 function typee_category_min_price( $slug ) {
 	// Chỉ dùng object cache (Redis) – không ghi transient vào bảng wp_options.
-	$key   = 'typee_minprice_' . md5( $slug );
+	$key   = 'typee_minprice_' . md5( $slug ) . '_v' . (int) wp_cache_get( 'ver', 'typee' );
 	$cache = wp_cache_get( $key, 'typee' );
 	if ( false !== $cache ) {
 		return (float) $cache;

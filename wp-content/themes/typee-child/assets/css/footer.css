@@ -24,7 +24,7 @@ body.typee .ty-footer__title {
 .ty-footer__pay { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
 .ty-footer__pay-title { font-weight: 600; font-size: 11px; line-height: 14px; letter-spacing: 0.66px; text-transform: uppercase; color: var(--ty-on-dark-60); }
 .ty-footer__pay-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.ty-footer__pay-chip { background: rgba(251, 248, 255, 0.1); border-radius: var(--ty-r-xs); padding: 4px 10px; font-weight: 500; font-size: 13px; line-height: 18px; letter-spacing: 0.26px; color: var(--ty-on-dark); }
+.ty-footer__pay-chip { background: rgba(251, 248, 255, 0.1); border-radius: var(--ty-r-badge); padding: 4px 10px; font-weight: 500; font-size: 13px; line-height: 18px; letter-spacing: 0.26px; color: var(--ty-on-dark); }
 .ty-footer__bottom {
 	border-top: 1px solid rgba(228, 225, 234, 0.2); padding-top: 25px;
 	display: flex; align-items: center; justify-content: space-between; gap: 16px;

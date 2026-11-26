@@ -10,10 +10,10 @@ defined( 'ABSPATH' ) || exit;
 $steps = array(
 	array( 'mobile', '1. Chọn Khung Kit', 'Layout 65%, 75%, TKL, Alice hoặc Fullsize nhôm CNC.' ),
 	array( 'layers', '2. Chọn Plate', 'FR4 nảy âm ấm, PC mềm dẻo hoặc Nhôm/Đồng đanh clack.' ),
-	array( 'bubble_chart', '3. Chọn Switch', 'Hơn 80 loại switch Linear, Tactile test sẵn âm thanh.' ),
+	array( 'bubble_chart', '3. Chọn Switch', 'Linear, Tactile, Silent – tự kiểm tra chân 3-pin / 5-pin với mạch.' ),
 	array( 'keyboard', '4. Chọn Keycap', 'Phối bảng màu PBT Cherry, OEM hoặc MOA thời thượng.' ),
 	array( 'science', '5. Dịch Vụ Mod', 'Tape-mod PCB, cân wire stab thần sầu, dán poron switchpad.' ),
-	array( 'verified', '6. Hoàn Tất & Giao', 'Test phím 100%, quay clip soundtest gửi bạn trước khi ship.' ),
+	array( 'verified', '6. Hoàn Tất & Giao', 'Kiểm định KCS 100% phím, gửi ảnh nghiệm thu trước khi ship.' ),
 );
 ?>
 <section class="ty-teaser" data-node="1:463">

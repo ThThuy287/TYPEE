@@ -1,68 +1,89 @@
 /* ==========================================================================
-   TYPEE design tokens – lấy từ Figma "Giao diện" (frame Trang chủ, Header, Footer)
+   TYPEE design tokens – ngôn ngữ thiết kế "Kinetic Precision" (PRD §7).
+   Bố cục / component lấy từ Figma "Giao diện"; khi màu, bo góc, font của Figma
+   khác PRD thì dùng giá trị của PRD (tài liệu đã duyệt).
    ========================================================================== */
 :root {
-	/* Màu thương hiệu */
-	--ty-accent: #ff5722;          /* Accent – nút chính, badge */
-	--ty-accent-strong: #b02f00;   /* Hover / chữ nhấn trên nền sáng */
+	/* Primary Kinetic Accent */
+	--ty-accent: #ff5722;          /* CTA chính */
+	--ty-accent-hover: #f4511e;    /* Hover CTA */
+	--ty-accent-light: #fff3e0;    /* Nền nhạt */
+	--ty-accent-text: #b02f00;     /* Chữ nhấn trên nền sáng (đạt tương phản WCAG AA ≥ 4.5:1) */
+	--ty-accent-strong: var(--ty-accent-text);
 	--ty-accent-soft: rgba(255, 87, 34, 0.1);
 	--ty-accent-soft-2: rgba(255, 87, 34, 0.2);
 	--ty-peach: #ffdbd1;           /* Chữ nhấn trên nền tối */
 
-	/* Nền */
-	--ty-carbon: #303036;          /* Header, footer, section tối */
-	--ty-carbon-95: rgba(48, 48, 54, 0.95);
-	--ty-carbon-90: rgba(48, 48, 54, 0.9);
-	--ty-canvas: #fbf8ff;          /* Nền card / section sáng */
-	--ty-surface: #f5f2fb;         /* Nền section xen kẽ */
-	--ty-chip: #efecf5;            /* Chip thông số, nút phụ */
-	--ty-border: #e4e1e7;
+	/* Surface Dark (kỹ thuật) */
+	--ty-carbon: #0f1117;          /* Header, footer, section tối */
+	--ty-carbon-card: #1a202c;     /* Card trên nền tối */
+	--ty-carbon-95: rgba(15, 17, 23, 0.95);
+	--ty-carbon-90: rgba(15, 17, 23, 0.9);
+
+	/* Surface Light */
+	--ty-canvas: #fbf8ff;
+	--ty-surface: #f8fafc;
+	--ty-white: #ffffff;
+	--ty-chip: #eef1f5;
+	--ty-border: #e2e4e9;
 
 	/* Chữ */
-	--ty-ink: #1b1b21;             /* Tiêu đề */
-	--ty-muted: #5f5e63;           /* Nội dung */
+	--ty-ink: #1e1e24;
+	--ty-muted: #4a4a55;
 	--ty-on-dark: #f2eff8;
 	--ty-on-dark-90: rgba(242, 239, 248, 0.9);
 	--ty-on-dark-80: rgba(242, 239, 248, 0.8);
-	--ty-on-dark-70: rgba(242, 239, 248, 0.7);
-	--ty-on-dark-60: rgba(242, 239, 248, 0.6);
-	--ty-on-dark-50: rgba(242, 239, 248, 0.5);
+	--ty-on-dark-70: rgba(242, 239, 248, 0.75);
+	--ty-on-dark-60: rgba(242, 239, 248, 0.7);   /* ≥ 4.5:1 trên #0f1117 */
+	--ty-on-dark-50: rgba(242, 239, 248, 0.6);
 	--ty-line-dark: rgba(228, 225, 234, 0.1);
-	--ty-glass: rgba(228, 225, 234, 0.1);
-	--ty-glass-2: rgba(228, 225, 234, 0.2);
+	--ty-glass: rgba(228, 225, 234, 0.08);
+	--ty-glass-2: rgba(228, 225, 234, 0.16);
 
-	/* Trạng thái */
-	--ty-success: #059669;
+	/* Semantic */
+	--ty-success: #10b981;
+	--ty-success-text: #047857;
+	--ty-warning: #f59e0b;
+	--ty-danger: #ef4444;
+	--ty-danger-text: #b91c1c;
+	--ty-info: #3b82f6;
 	--ty-online: #34d399;
-	--ty-brown-40: rgba(91, 64, 57, 0.4);
 
 	/* Typography */
-	--ty-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-	--ty-font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+	--ty-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--ty-font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+	--ty-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-	/* Bo góc */
-	--ty-r-xs: 2px;
-	--ty-r-sm: 4px;
-	--ty-r-md: 8px;
-	--ty-r-lg: 12px;
-	--ty-r-xl: 16px;
+	/* Bo góc (PRD §7) */
+	--ty-r-xs: 6px;
+	--ty-r-badge: 8px;    /* Tag / Badge – rounded-lg */
+	--ty-r-btn: 12px;     /* Button / Input – rounded-xl */
+	--ty-r-card: 16px;    /* Card sản phẩm / Modal – rounded-2xl */
+	--ty-r-hero: 24px;    /* Hero block / Matrix – rounded-3xl */
+	--ty-r-sm: var(--ty-r-badge);
+	--ty-r-md: var(--ty-r-card);
+	--ty-r-lg: 999px;     /* Dot / pill tròn */
+	--ty-r-xl: var(--ty-r-hero);
 
-	/* Bố cục */
-	--ty-container: 1440px;
+	/* Bố cục (PRD NFR-04) */
+	--ty-container: 1280px;
+	--ty-container-wide: 1600px;   /* Custom Builder & Compare Matrix */
 	--ty-gutter: 48px;
 	--ty-gap: 24px;
+	--ty-tap: 44px;                /* Vùng chạm tối thiểu trên mobile */
 
 	/* Bóng */
-	--ty-shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.05);
-	--ty-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-	--ty-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-	--ty-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	--ty-shadow-xs: 0 1px 1px rgba(15, 17, 23, 0.05);
+	--ty-shadow-sm: 0 1px 2px rgba(15, 17, 23, 0.06);
+	--ty-shadow-md: 0 10px 15px -3px rgba(15, 17, 23, 0.1), 0 4px 6px -4px rgba(15, 17, 23, 0.1);
+	--ty-shadow-lg: 0 20px 25px -5px rgba(15, 17, 23, 0.12), 0 8px 10px -6px rgba(15, 17, 23, 0.1);
 	--ty-shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+	--ty-focus: 0 0 0 3px rgba(255, 87, 34, 0.45);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
 	:root { --ty-gutter: 24px; --ty-gap: 16px; }
 }
-@media (max-width: 640px) {
+@media (max-width: 767px) {
 	:root { --ty-gutter: 16px; }
 }

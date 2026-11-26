@@ -12,7 +12,7 @@ get_header();
 
 $sections = apply_filters(
 	'typee_home_sections',
-	array( 'hero', 'palette', 'categories', 'deals', 'builder', 'soundtest', 'newsletter' )
+	array( 'hero', 'palette', 'categories', 'deals', 'builder', 'guides', 'newsletter' )
 );
 ?>
 <div class="ty-home">

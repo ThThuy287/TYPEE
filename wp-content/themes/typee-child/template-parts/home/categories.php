@@ -27,7 +27,12 @@ foreach ( $defaults as $slug => $copy ) {
 	}
 	$img_id = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
 	if ( ! $img_id ) {
-		$first = wc_get_products( array( 'status' => 'publish', 'limit' => 1, 'category' => array( $slug ), 'return' => 'ids' ) );
+		$first = typee_cached_ids(
+			'catfirst_' . $slug,
+			function () use ( $slug ) {
+				return wc_get_products( array( 'status' => 'publish', 'limit' => 1, 'category' => array( $slug ), 'return' => 'ids' ) );
+			}
+		);
 		$img_id = $first ? (int) get_post_thumbnail_id( $first[0] ) : 0;
 	}
 	$cards[] = array(
@@ -58,7 +63,7 @@ $total_cats = count(
 			<div class="ty-section-head__main">
 				<span class="ty-eyebrow"><?php typee_the_icon( 'category', 14 ); ?> BỘ SƯU TẬP LINH KIỆN CƠ HỌC</span>
 				<h2 class="ty-h2">DANH MỤC TUYỂN CHỌN</h2>
-				<p class="ty-section-head__desc">Đầy đủ module từ bàn phím build sẵn, Kit nhôm cao cấp đến phụ kiện tinh chỉnh âm thanh.</p>
+				<p class="ty-section-head__desc">Đầy đủ module từ bàn phím build sẵn, Kit nhôm cao cấp đến phụ kiện modding.</p>
 			</div>
 			<?php if ( typee_url( 'shop' ) ) : ?>
 				<a class="ty-more" href="<?php echo esc_url( typee_url( 'shop' ) ); ?>"><?php echo esc_html( sprintf( 'Xem tất cả %d danh mục', $total_cats ) ); ?> <?php typee_the_icon( 'arrow_forward', 12 ); ?></a>

@@ -10,12 +10,30 @@ defined( 'ABSPATH' ) || exit;
 
 $suggest = array();
 if ( function_exists( 'wc_get_products' ) ) {
-	$suggest = wc_get_products(
-		array(
-			'status'  => 'publish',
-			'limit'   => 4,
-			'orderby' => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
-			'meta_key' => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery
+	// Truy vấn sắp xếp theo lượt bán chạy trên mọi trang → cache danh sách ID 10 phút.
+	$suggest = typee_products_by_ids(
+		typee_cached_ids(
+			'suggest',
+			function () {
+				return wc_get_products(
+					array(
+						'status'   => 'publish',
+						'limit'    => 8,
+						'orderby'  => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
+						'meta_key' => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery
+						'return'   => 'ids',
+					)
+				);
+			}
+		)
+	);
+	// Bỏ quà tặng 0đ / sản phẩm ẩn khỏi gợi ý tìm kiếm.
+	$suggest = array_values(
+		array_filter(
+			$suggest,
+			function ( $p ) {
+				return (float) $p->get_price() > 0 && $p->is_visible();
+			}
 		)
 	);
 }
@@ -26,7 +44,8 @@ $nav = array(
 	array( 'key' => 'kit', 'text' => 'Khung Kit (Barebone)' ),
 	array( 'key' => 'switch', 'text' => 'Switch' ),
 	array( 'key' => 'keycap', 'text' => 'Keycap & Phụ kiện' ),
-	array( 'key' => 'blog', 'text' => 'Cẩm nang & Soundtest' ),
+	array( 'key' => 'compare', 'text' => 'So sánh' ),
+	array( 'key' => 'guides', 'text' => 'Cẩm nang Modding' ),
 );
 ?>
 <!DOCTYPE html>
@@ -60,9 +79,9 @@ $nav = array(
 					</p>
 				</div>
 				<nav class="ty-topbar__links" aria-label="Hỗ trợ">
-					<?php typee_link( 'faq', 'Hướng dẫn Newbie (FAQ)', 'ty-topbar__link' ); ?>
+					<?php typee_link( 'guides', 'Hướng dẫn Newbie', 'ty-topbar__link' ); ?>
 					<?php typee_link( 'warranty', 'Chính sách Bảo hành & RMA', 'ty-topbar__link' ); ?>
-					<?php typee_link( 'tracking', 'Tra cứu đơn hàng', 'ty-topbar__link' ); ?>
+					<?php typee_link( 'tracking', 'Tra cứu đơn hàng / RMA', 'ty-topbar__link' ); ?>
 					<a class="ty-topbar__hotline" href="tel:<?php echo esc_attr( preg_replace( '/\s+/', '', typee_copy( 'hotline' ) ) ); ?>">
 						<?php typee_the_icon( 'call', 12 ); ?>
 						<span><?php echo esc_html( typee_copy( 'hotline' ) ); ?></span>
@@ -88,17 +107,16 @@ $nav = array(
 				</a>
 
 				<div class="ty-search">
-					<form role="search" method="get" class="ty-search__form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-						<label class="ty-sr" for="ty-search-input">Tìm kiếm sản phẩm</label>
+					<form role="search" method="get" class="ty-search__form" action="<?php echo esc_url( typee_url( 'search' ) ); ?>">
+						<label class="ty-sr" for="ty-search-input">Tìm kiếm sản phẩm và cẩm nang</label>
 						<?php typee_the_icon( 'search', 16, 'ty-search__icon' ); ?>
-						<input id="ty-search-input" class="ty-search__input" type="search" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" placeholder="Tìm tên Kit, Switch, Keycap hoặc mã SKU..." autocomplete="off" />
-						<input type="hidden" name="post_type" value="product" />
+						<input id="ty-search-input" class="ty-search__input" type="search" name="q" value="<?php echo esc_attr( isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : get_search_query() ); // phpcs:ignore WordPress.Security.NonceVerification ?>" placeholder="Tìm tên Kit, Switch, Keycap hoặc mã SKU..." autocomplete="off" />
 						<button class="ty-search__btn" type="submit">Tìm kiếm</button>
 					</form>
 					<?php if ( $suggest ) : ?>
 						<div class="ty-search__suggest">
 							<span class="ty-search__suggest-label">Gợi ý:</span>
-							<?php foreach ( $suggest as $i => $sp ) : ?>
+							<?php foreach ( array_slice( $suggest, 0, 4 ) as $i => $sp ) : ?>
 								<?php if ( $i ) : ?><span class="ty-search__dot" aria-hidden="true">•</span><?php endif; ?>
 								<a href="<?php echo esc_url( $sp->get_permalink() ); ?>"><?php echo esc_html( wp_trim_words( $sp->get_name(), 3, '' ) ); ?></a>
 							<?php endforeach; ?>

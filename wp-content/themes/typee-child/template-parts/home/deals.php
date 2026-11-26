@@ -34,20 +34,30 @@ if ( $sale_ids ) {
 }
 
 if ( ! $products ) {
-	foreach ( array( 'kit', 'pre-built', 'switch', 'keycap' ) as $slug ) {
-		$found = wc_get_products(
-			array(
-				'status'   => 'publish',
-				'limit'    => 1,
-				'category' => array( $slug ),
-				'orderby'  => 'date',
-				'order'    => 'DESC',
-			)
-		);
-		if ( $found ) {
-			$products[] = $found[0];
-		}
-	}
+	$products = typee_products_by_ids(
+		typee_cached_ids(
+			'deals_fallback',
+			function () {
+				$ids = array();
+				foreach ( array( 'kit', 'pre-built', 'switch', 'keycap' ) as $slug ) {
+					$found = wc_get_products(
+						array(
+							'status'   => 'publish',
+							'limit'    => 1,
+							'category' => array( $slug ),
+							'orderby'  => 'date',
+							'order'    => 'DESC',
+							'return'   => 'ids',
+						)
+					);
+					if ( $found ) {
+						$ids[] = $found[0];
+					}
+				}
+				return $ids;
+			}
+		)
+	);
 }
 if ( ! $products ) {
 	return;

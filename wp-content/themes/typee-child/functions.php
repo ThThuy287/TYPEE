@@ -17,6 +17,9 @@ define( 'TYPEE_CHILD_URI', get_stylesheet_directory_uri() );
 require_once TYPEE_CHILD_DIR . '/inc/helpers.php';
 require_once TYPEE_CHILD_DIR . '/inc/product-data.php';
 require_once TYPEE_CHILD_DIR . '/inc/template-hooks.php';
+require_once TYPEE_CHILD_DIR . '/inc/routes.php';
+require_once TYPEE_CHILD_DIR . '/inc/builder-data.php';
+require_once TYPEE_CHILD_DIR . '/inc/catalog.php';
 
 /**
  * CSS & JS.
@@ -43,9 +46,18 @@ add_action( 'wp_enqueue_scripts', function () {
 	typee_style( 'typee-header', 'header.css' );
 	typee_style( 'typee-footer', 'footer.css' );
 	typee_style( 'typee-product-card', 'product-card.css' );
+	typee_style( 'typee-components', 'components.css' );
 
-	if ( is_front_page() ) {
+	if ( is_front_page() && ! typee_current_virtual() ) {
 		typee_style( 'typee-home', 'home.css' );
+	}
+	if ( typee_is_catalog() ) {
+		typee_style( 'typee-catalog', 'catalog.css' );
+		wp_enqueue_script( 'typee-catalog', TYPEE_CHILD_URI . '/assets/js/catalog.js', array( 'typee-main' ), typee_asset_ver( 'js/catalog.js' ), true );
+	}
+	if ( 'builder' === typee_current_virtual() ) {
+		typee_style( 'typee-builder', 'builder.css' );
+		wp_enqueue_script( 'typee-builder', TYPEE_CHILD_URI . '/assets/js/builder.js', array( 'typee-main' ), typee_asset_ver( 'js/builder.js' ), true );
 	}
 
 	wp_enqueue_script( 'typee-main', TYPEE_CHILD_URI . '/assets/js/main.js', array( 'jquery' ), typee_asset_ver( 'js/main.js' ), true );

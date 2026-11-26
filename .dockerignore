@@ -1,0 +1,11 @@
+# Chỉ gửi vào Docker những gì Dockerfile cần (tránh gửi uploads, file .sql, .git…)
+*
+!docker/
+!wp-content/plugins/
+!wp-content/themes/
+!wp-content/languages/
+!wp-content/object-cache.php
+!wp-content/index.php
+# Phần nhóm tự viết được nối trực tiếp từ máy, không đóng vào image
+wp-content/plugins/typee-core
+wp-content/themes/typee-child

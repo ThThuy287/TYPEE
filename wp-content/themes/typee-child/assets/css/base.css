@@ -20,6 +20,9 @@ body.typee .ty-display {
 :where(body.typee) img { max-width: 100%; height: auto; }
 body.typee #main { background: var(--ty-canvas); }
 
+/* Thuộc tính hidden luôn thắng các rule display của component */
+body.typee [hidden] { display: none !important; }
+
 .ty-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
 
 .ty-container {
@@ -39,14 +42,14 @@ body.typee #main { background: var(--ty-canvas); }
 /* Nút */
 .ty-btn {
 	display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-	border-radius: var(--ty-r-xs); border: 0; cursor: pointer;
+	border-radius: var(--ty-r-btn); border: 0; cursor: pointer; min-height: var(--ty-tap);
 	font-family: var(--ty-font-body); font-weight: 700; font-size: 14px; line-height: 20px;
 	letter-spacing: 0.14px; padding: 12px 24px; text-transform: none; margin: 0;
 	transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
 	min-height: 0;
 }
 body.typee .ty-btn--primary { background: var(--ty-accent); color: #fff; box-shadow: var(--ty-shadow-lg); }
-body.typee .ty-btn--primary:hover { background: var(--ty-accent-strong); color: #fff; }
+body.typee .ty-btn--primary:hover { background: var(--ty-accent-hover); color: #fff; }
 body.typee .ty-btn--glass { background: rgba(228, 225, 234, 0.15); color: var(--ty-on-dark); font-weight: 600; }
 body.typee .ty-btn--glass:hover { background: rgba(228, 225, 234, 0.25); }
 body.typee .ty-btn--soft { background: var(--ty-chip); color: var(--ty-ink); }
@@ -68,7 +71,16 @@ body.typee .ty-h2 { font-size: 32px; line-height: 40px; letter-spacing: -0.64px;
 }
 .ty-more:hover { text-decoration: underline; }
 
-.is-disabled { cursor: default; }
+.is-disabled { cursor: default; opacity: .7; }
+
+/* Focus rõ ràng cho bàn phím (PRD NFR-06) */
+body.typee :is(a, button, input, select, textarea, [tabindex]):focus-visible { outline: none; box-shadow: var(--ty-focus); }
+
+/* Font kỹ thuật cho SKU / mã đơn / mã RMA (PRD §7) */
+.ty-mono { font-family: var(--ty-font-mono); letter-spacing: 0; }
+
+/* Container rộng cho Builder & Compare (PRD NFR-04) */
+.ty-container--wide { max-width: var(--ty-container-wide); }
 
 @media (max-width: 768px) {
 	.ty-section-head { flex-direction: column; align-items: flex-start; }

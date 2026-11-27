@@ -49,11 +49,22 @@
 		}
 		$(document).on('click', '[' + attr + ']', function (e) {
 			e.preventDefault();
+			list = store.get(key);
 			var id = String(this.getAttribute(attr));
 			var i = list.indexOf(id);
 			if (i > -1) { list.splice(i, 1); } else { list.push(id); }
 			if (key === 'typee_compare' && list.length > 4) { list.shift(); }
 			store.set(key, list);
+			paint();
+		});
+		if (key === 'typee_compare') {
+			$(document).on('typee:compare-sync', function (_e, nextList) {
+				list = Array.isArray(nextList) ? nextList.map(String) : store.get(key);
+				paint();
+			});
+		}
+		$(document).on('typee:cards-updated', function () {
+			list = store.get(key);
 			paint();
 		});
 		paint();
@@ -110,6 +121,16 @@
 	$(document).on('click', '[data-typee-open]', function (e) {
 		var box = document.querySelector(this.getAttribute('data-typee-open'));
 		if (box) { e.preventDefault(); openBoxEl(box, this); }
+	});
+	$(document).on('click', '[data-typee-cart-toggle]', function (e) {
+		var cartDrawer = document.getElementById('ty-sidecart');
+		if (cartDrawer) { e.preventDefault(); openBoxEl(cartDrawer, this); }
+	});
+	$(document.body).on('added_to_cart', function () {
+		var cartDrawer = document.getElementById('ty-sidecart');
+		if (cartDrawer && !cartDrawer.classList.contains('is-open')) {
+			openBoxEl(cartDrawer);
+		}
 	});
 	$(document).on('click', '[data-typee-close]', function (e) { e.preventDefault(); closeBox(); });
 	document.addEventListener('keydown', function (e) {

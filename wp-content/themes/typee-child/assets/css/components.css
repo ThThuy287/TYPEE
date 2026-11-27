@@ -86,9 +86,40 @@ body.typee .ty-check input { width: 18px; height: 18px; margin: 0; accent-color:
 /* ---------- Trạng thái trống ---------- */
 .ty-empty { text-align: center; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .ty-empty__ic { width: 56px; height: 56px; border-radius: var(--ty-r-card); background: var(--ty-accent-light); color: var(--ty-accent-text); display: inline-flex; align-items: center; justify-content: center; }
+.ty-empty__mascot { display: block; width: 84px; height: auto; max-height: 96px; object-fit: contain; margin-bottom: 4px; }
 body.typee .ty-empty__title { font-size: 22px; line-height: 30px; }
 .ty-empty__desc { color: var(--ty-muted); max-width: 480px; }
 .ty-empty__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 8px; }
+
+/* ---------- Logo dọc trang Đăng nhập / Đăng ký ---------- */
+.ty-auth-brand { display: flex; justify-content: center; padding: 8px 0 28px; }
+.ty-auth-brand__link { display: inline-flex; }
+.ty-auth-brand__img { display: block; width: 200px; max-width: 100%; height: auto; object-fit: contain; }
+
+/* ---------- Side Cart Drawer (AJAX Mini Cart) ---------- */
+.ty-sidecart__head { background: var(--ty-carbon); color: #fff; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+body.typee .ty-sidecart__head .ty-drawer__title { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: #fff; }
+.ty-sidecart__head .ty-icon-btn { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.ty-sidecart__wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.ty-sidecart__content { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.ty-sidecart__empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; gap: 8px; }
+.ty-sidecart__empty-title { margin: 4px 0 0; font-weight: 700; font-size: 16px; color: var(--ty-ink); }
+.ty-sidecart__empty-desc { margin: 0 0 10px; font-size: 13px; color: var(--ty-muted); max-width: 280px; }
+.ty-sidecart__list { flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.ty-sidecart__item { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--ty-chip); }
+.ty-sidecart__thumb { width: 64px; height: 64px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: var(--ty-surface); border: 1px solid var(--ty-border); }
+.ty-sidecart__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ty-sidecart__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.ty-sidecart__name { font-weight: 600; font-size: 13px; line-height: 18px; color: var(--ty-ink); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ty-sidecart__name:hover { color: var(--ty-accent); }
+.ty-sidecart__meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--ty-muted); }
+.ty-sidecart__price { font-weight: 700; color: var(--ty-accent); }
+.ty-sidecart__rm { width: 26px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--ty-muted); flex-shrink: 0; }
+.ty-sidecart__rm:hover { background: var(--ty-chip); color: var(--ty-danger-text); }
+.ty-sidecart__foot { padding: 16px 20px 20px; border-top: 1px solid var(--ty-border); background: var(--ty-white); display: flex; flex-direction: column; gap: 12px; }
+.ty-sidecart__sub { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--ty-muted); }
+.ty-sidecart__sub strong { font-size: 18px; font-weight: 800; color: var(--ty-ink); }
+.ty-sidecart__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ---------- Overlay: Drawer & Modal (PRD NFR-06) ---------- */
 .ty-overlay { position: fixed; inset: 0; z-index: 9998; background: rgba(15, 17, 23, .6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s; }

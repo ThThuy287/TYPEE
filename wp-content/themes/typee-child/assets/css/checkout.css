@@ -1,0 +1,1716 @@
+/* ==========================================================================
+   Trang Thanh Toán Đơn Hàng (One-Page Checkout) & Đặt Hàng Thành Công
+   Figma Frames: 82:1187 (Checkout) & 82:8375 (Order Received)
+   ========================================================================== */
+
+.ty-co-page {
+	--co-input-bg: #f5f2fb;
+	--co-chip-bg: #efecf5;
+	--co-border: #e4e1ea;
+	--co-brown: #5b4039;
+	--co-emerald: #059669;
+	--co-emerald-dark: #047857;
+	--co-emerald-soft: rgba(16, 185, 129, 0.12);
+
+	background: var(--ty-canvas);
+	padding-bottom: 64px;
+}
+
+/* Ẩn các khối mặc định trùng lặp của Flatsome nếu còn sót */
+body.woocommerce-checkout .checkout-page-title {
+	display: none !important;
+}
+
+/* ---------- Top Progress & Breadcrumb Ribbon (Figma 82:1190) ---------- */
+.ty-co-ribbon {
+	background: var(--co-input-bg);
+	border-bottom: 1px solid var(--co-border);
+	box-shadow: var(--ty-shadow-xs);
+	padding: 14px 0;
+}
+
+.ty-co-ribbon__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.ty-co-ribbon__left {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.ty-co-ribbon__brand {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.ty-co-ribbon__brand img {
+	display: block;
+	height: 20px;
+	width: auto;
+	object-fit: contain;
+}
+
+.ty-co-ribbon__div {
+	width: 1px;
+	height: 16px;
+	background: var(--co-border);
+	flex-shrink: 0;
+}
+
+.ty-ty-code__brand {
+	display: block;
+	height: 20px;
+	width: auto;
+	object-fit: contain;
+	margin-bottom: 6px;
+}
+
+.ty-co-bc ol {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-muted);
+}
+
+.ty-co-bc li {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+}
+
+.ty-co-bc a {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.ty-co-bc a:hover {
+	color: var(--ty-accent-text);
+}
+
+.ty-co-bc__sep {
+	color: rgba(144, 112, 103, 0.45);
+}
+
+.ty-co-bc [aria-current="page"] {
+	color: var(--ty-ink);
+	font-weight: 600;
+}
+
+/* Stepper 3 bước (Figma 82:1206) */
+.ty-co-steps {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ty-co-step {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--ty-muted);
+}
+
+.ty-co-step__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.ty-co-step__dot {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--co-border);
+	color: var(--ty-muted);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.ty-co-step.is-done .ty-co-step__dot {
+	background: var(--co-border);
+	color: var(--co-brown);
+}
+
+.ty-co-step.is-active {
+	color: var(--ty-ink);
+	font-weight: 700;
+}
+
+.ty-co-step.is-active .ty-co-step__dot {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.ty-co-step__line {
+	margin: 0;
+	width: 36px;
+	height: 2px;
+	background: var(--co-border);
+}
+
+.ty-co-step__line.is-done {
+	background: var(--ty-accent);
+}
+
+/* ---------- Main Dual-Column Workstation (Figma 82:1225) ---------- */
+.ty-co-shell {
+	padding-top: 32px;
+}
+
+.ty-co-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: 24px;
+	align-items: start;
+}
+
+.ty-co-main {
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+	min-width: 0;
+}
+
+.ty-co-aside {
+	position: sticky;
+	top: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-width: 0;
+}
+
+body.admin-bar .ty-co-aside {
+	top: 52px;
+}
+
+/* ---------- Card Chung Cột Trái (Figma EL-410d4846) ---------- */
+.ty-co-card {
+	background: var(--ty-white);
+	border: 1px solid var(--co-border);
+	border-radius: var(--ty-r-card);
+	padding: 32px;
+	box-shadow: var(--ty-shadow-xs);
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+.ty-co-card__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ty-co-card__head-left {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.ty-co-num {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-chip-bg);
+	color: var(--ty-accent);
+	font-family: var(--ty-font-display);
+	font-size: 17px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+body.typee .ty-co-card__title {
+	font-family: var(--ty-font-display);
+	font-size: 22px;
+	line-height: 28px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--ty-ink);
+}
+
+.ty-co-card__sub {
+	font-size: 12.5px;
+	line-height: 18px;
+	color: var(--ty-muted);
+	margin-top: 2px;
+}
+
+.ty-co-secure-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 5px 10px;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-input-bg);
+	color: var(--co-brown);
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ty-co-secure-pill .ty-icon {
+	color: var(--ty-accent);
+}
+
+/* ---------- Form Fields Grid & Select2 Override (Figma 82:1242) ---------- */
+.ty-co-billing-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.ty-co-billing-grid::before,
+.ty-co-billing-grid::after {
+	display: none !important;
+}
+
+body.typee .ty-co-form p.form-row {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+	float: none !important;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+body.typee .ty-co-form p.form-row.form-row-wide {
+	grid-column: 1 / -1;
+}
+
+body.typee .ty-co-form p.form-row > label {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+body.typee .ty-co-form p.form-row abbr.required {
+	color: var(--ty-accent);
+	text-decoration: none;
+	font-weight: 700;
+	border: 0;
+}
+
+body.typee .ty-co-form .woocommerce-input-wrapper {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+
+/* Icon đầu ô nhập liệu khớp Figma 82:1249 - 82:1306 */
+body.typee .ty-co-form .ty-co-field--icon-person .woocommerce-input-wrapper::before,
+body.typee .ty-co-form .ty-co-field--icon-phone .woocommerce-input-wrapper::before,
+body.typee .ty-co-form .ty-co-field--icon-mail .woocommerce-input-wrapper::before,
+body.typee .ty-co-form .ty-co-field--icon-pin .woocommerce-input-wrapper::before,
+body.typee .ty-co-form .ty-co-field--icon-map .woocommerce-input-wrapper::before,
+body.typee .ty-co-form .ty-co-field--icon-home .woocommerce-input-wrapper::before {
+	content: '';
+	position: absolute;
+	left: 14px;
+	top: 14px;
+	width: 16px;
+	height: 16px;
+	z-index: 3;
+	pointer-events: none;
+	background-color: #5f5e63;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+body.typee .ty-co-form .ty-co-field--icon-person .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/person.svg'); mask-image: url('../icons/person.svg'); }
+body.typee .ty-co-form .ty-co-field--icon-phone .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/call.svg'); mask-image: url('../icons/call.svg'); }
+body.typee .ty-co-form .ty-co-field--icon-mail .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/mail.svg'); mask-image: url('../icons/mail.svg'); }
+body.typee .ty-co-form .ty-co-field--icon-pin .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/location_on.svg'); mask-image: url('../icons/location_on.svg'); }
+body.typee .ty-co-form .ty-co-field--icon-map .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/home_pin.svg'); mask-image: url('../icons/home_pin.svg'); }
+body.typee .ty-co-form .ty-co-field--icon-home .woocommerce-input-wrapper::before { -webkit-mask-image: url('../icons/location_on.svg'); mask-image: url('../icons/location_on.svg'); }
+
+body.typee .ty-co-form .ty-co-field--icon-person input.input-text,
+body.typee .ty-co-form .ty-co-field--icon-phone input.input-text,
+body.typee .ty-co-form .ty-co-field--icon-mail input.input-text,
+body.typee .ty-co-form .ty-co-field--icon-home input.input-text {
+	padding-left: 40px;
+}
+
+body.typee .ty-co-form .ty-co-field--icon-pin .select2-selection--single,
+body.typee .ty-co-form .ty-co-field--icon-map .select2-selection--single {
+	padding-left: 40px;
+}
+
+body.typee .ty-co-form input.input-text,
+body.typee .ty-co-form select,
+body.typee .ty-co-form textarea {
+	width: 100%;
+	height: 44px;
+	min-height: 44px;
+	margin: 0 !important;
+	padding: 0 14px;
+	border: 1px solid transparent;
+	border-radius: var(--ty-r-btn);
+	background: var(--co-input-bg);
+	color: var(--ty-ink);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	box-shadow: none;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.typee .ty-co-form textarea {
+	height: auto;
+	min-height: 88px;
+	padding: 12px 14px;
+	line-height: 21px;
+	resize: vertical;
+}
+
+body.typee .ty-co-form input.input-text:focus,
+body.typee .ty-co-form select:focus,
+body.typee .ty-co-form textarea:focus {
+	background: var(--ty-white);
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-focus);
+	outline: none;
+}
+
+/* Trạng thái lỗi trường nhập liệu */
+body.typee .ty-co-form .form-row.woocommerce-invalid input.input-text,
+body.typee .ty-co-form .form-row.woocommerce-invalid select,
+body.typee .ty-co-form .form-row.woocommerce-invalid .select2-selection--single {
+	border-color: var(--ty-danger) !important;
+	background: rgba(239, 68, 68, 0.04);
+}
+
+/* Chuẩn hóa Select2 của WooCommerce & woo-vietnam-checkout khớp Figma */
+body.typee .ty-co-form .select2-container {
+	width: 100% !important;
+}
+
+body.typee .ty-co-form .select2-container--default .select2-selection--single {
+	height: 44px;
+	border: 1px solid transparent;
+	border-radius: var(--ty-r-btn);
+	background: var(--co-input-bg);
+	display: flex;
+	align-items: center;
+	padding: 0 32px 0 14px;
+}
+
+body.typee .ty-co-form .select2-container--default.select2-container--open .select2-selection--single,
+body.typee .ty-co-form .select2-container--default.select2-container--focus .select2-selection--single {
+	background: var(--ty-white);
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-focus);
+}
+
+body.typee .ty-co-form .select2-container--default .select2-selection--single .select2-selection__rendered {
+	padding: 0;
+	line-height: 42px;
+	color: var(--ty-ink);
+	font-size: 14px;
+}
+
+body.typee .ty-co-form .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 42px;
+	right: 8px;
+}
+
+/* Ghi chú kỹ thuật Modding (Figma 82:1307) */
+.ty-co-notes-block {
+	margin-top: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.ty-co-notes-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.ty-co-notes-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+.ty-co-notes-ic {
+	color: var(--ty-accent);
+}
+
+.ty-co-notes-free {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--ty-muted);
+}
+
+/* Fast Checkboxes & VAT Box (Figma 82:1318) */
+.ty-co-fast-checks {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 16px;
+	padding-top: 14px;
+	border-top: 1px dashed var(--co-border);
+}
+
+.ty-co-check {
+	display: inline-flex;
+	align-items: center;
+	gap: 9px;
+	font-size: 13.5px;
+	color: var(--ty-ink);
+	cursor: pointer;
+	margin: 0;
+}
+
+body.typee .ty-co-check input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	accent-color: var(--ty-accent);
+	flex-shrink: 0;
+}
+
+.ty-co-vat-box {
+	margin-top: 14px;
+	padding: 16px;
+	border-radius: var(--ty-r-btn);
+	background: #fbf9ff;
+	border: 1px dashed rgba(255, 87, 34, 0.35);
+}
+
+.ty-co-vat-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+/* ---------- Section 2: Duy nhất 1 phương thức Free Shipping 0₫ (Figma 82:1337) ---------- */
+.ty-co-ship-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px 20px;
+	border-radius: var(--ty-r-btn);
+	background: var(--co-input-bg);
+	border: 1.5px solid var(--ty-accent);
+}
+
+.ty-co-ship-card__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ty-co-ship-card__info {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ty-co-ship-card__ic {
+	width: 40px;
+	height: 40px;
+	border-radius: var(--ty-r-badge);
+	background: rgba(255, 87, 34, 0.12);
+	color: var(--ty-accent);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ty-co-ship-card__name {
+	display: block;
+	font-size: 14.5px;
+	line-height: 20px;
+	color: var(--ty-ink);
+}
+
+.ty-co-ship-card__desc {
+	display: block;
+	font-size: 12.5px;
+	color: var(--ty-muted);
+	margin-top: 2px;
+}
+
+.ty-co-radio-checked {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ty-co-ship-card__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 10px;
+	border-top: 1px solid var(--co-border);
+}
+
+.ty-co-free-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 9px;
+	border-radius: var(--ty-r-xs);
+	background: var(--co-emerald-soft);
+	color: var(--co-emerald-dark);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+}
+
+.ty-co-ship-card__price {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.ty-co-ship-card__price del {
+	font-size: 13px;
+	color: var(--ty-muted);
+}
+
+.ty-co-ship-card__price strong {
+	font-size: 15px;
+	font-weight: 800;
+	color: var(--co-emerald);
+}
+
+/* ---------- Section 3: Payment Radio Cards (Figma 82:1385) ---------- */
+body.typee #payment.ty-co-payments {
+	background: transparent;
+	border: 0;
+	padding: 0;
+}
+
+.ty-co-pay-list {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.ty-co-pay-item {
+	margin: 0 !important;
+	padding: 16px !important;
+	border-radius: var(--ty-r-btn);
+	background: var(--co-input-bg);
+	border: 1.5px solid transparent;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ty-co-pay-item:hover {
+	border-color: rgba(255, 87, 34, 0.35);
+}
+
+.ty-co-pay-item:has(.ty-co-pay-radio:checked),
+.ty-co-pay-item.is-chosen {
+	background: #fcfaff;
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-shadow-xs);
+}
+
+body.typee .ty-co-pay-radio {
+	position: absolute !important;
+	opacity: 0 !important;
+	pointer-events: none;
+}
+
+.ty-co-pay-label {
+	display: flex !important;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 14px;
+	width: 100%;
+	margin: 0 !important;
+	cursor: pointer;
+}
+
+.ty-co-pay-ic {
+	width: 44px;
+	height: 44px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	color: var(--ty-muted);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.ty-co-pay-ic.is-accent {
+	color: var(--ty-accent);
+}
+
+.ty-co-pay-ic.is-momo {
+	color: #a50064;
+}
+
+.ty-co-pay-ic.is-vnpay {
+	color: #005baa;
+}
+
+.ty-co-pay-content {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.ty-co-pay-title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.ty-co-pay-title {
+	font-family: var(--ty-font-display);
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.ty-co-pay-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: var(--ty-r-xs);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+}
+
+.ty-co-pay-badge.is-accent {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+}
+
+.ty-co-pay-badge.is-soft {
+	background: var(--co-chip-bg);
+	color: var(--ty-muted);
+	font-weight: 600;
+}
+
+.ty-co-pay-badge.is-neutral {
+	background: var(--co-border);
+	color: var(--ty-ink);
+	font-weight: 600;
+}
+
+.ty-co-pay-desc {
+	font-size: 12.5px;
+	line-height: 18px;
+	color: var(--ty-muted);
+	font-weight: 400;
+}
+
+.ty-co-pay-indicator {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--co-border);
+	color: transparent;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-top: 4px;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ty-co-pay-item:has(.ty-co-pay-radio:checked) .ty-co-pay-indicator,
+.ty-co-pay-item.is-chosen .ty-co-pay-indicator {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+}
+
+body.typee .ty-co-pay-box {
+	margin: 14px 0 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+}
+
+body.typee .ty-co-pay-box::before {
+	display: none !important;
+}
+
+/* Hộp hướng dẫn nhanh VietQR (Figma 82:1405) */
+.ty-co-vietqr-hint {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding: 14px 16px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-white);
+	border: 1px solid var(--co-border);
+	box-shadow: var(--ty-shadow-inset);
+}
+
+.ty-co-vietqr-hint__left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	max-width: 340px;
+}
+
+.ty-co-vietqr-hint__ic {
+	width: 44px;
+	height: 44px;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-chip-bg);
+	color: var(--ty-accent);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ty-co-vietqr-hint__left strong {
+	display: block;
+	font-size: 12.5px;
+	color: var(--ty-ink);
+}
+
+.ty-co-vietqr-hint__left span {
+	display: block;
+	font-size: 11.5px;
+	line-height: 16.5px;
+	color: var(--ty-muted);
+}
+
+.ty-co-vietqr-hint__banks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.ty-co-vietqr-hint__banks span {
+	padding: 4px 8px;
+	border-radius: var(--ty-r-xs);
+	background: var(--co-chip-bg);
+	color: var(--ty-ink);
+	font-size: 11px;
+	font-weight: 700;
+}
+
+/* ---------- Right Column: Order Summary Card (Figma 82:1469) ---------- */
+.ty-co-summary {
+	background: var(--ty-white);
+	border: 1px solid var(--co-border);
+	border-radius: var(--ty-r-card);
+	padding: 32px;
+	box-shadow: 0 4px 12px -2px rgba(15, 17, 23, 0.08);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.ty-co-summary__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ty-co-summary__head-left {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ty-co-summary__bag-ic {
+	color: var(--ty-accent);
+}
+
+body.typee .ty-co-summary__title {
+	font-family: var(--ty-font-display);
+	font-size: 22px;
+	line-height: 30px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.ty-co-summary__count {
+	padding: 2px 9px;
+	border-radius: 999px;
+	background: var(--co-chip-bg);
+	color: var(--ty-muted);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.ty-co-summary__edit {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--ty-accent-text);
+}
+
+.ty-co-summary__edit:hover {
+	text-decoration: underline;
+}
+
+/* Product Line Items (Figma 82:1481) */
+.ty-co-review {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.ty-co-items {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	max-height: 340px;
+	overflow-y: auto;
+	padding-right: 4px;
+}
+
+.ty-co-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.ty-co-item__thumb {
+	position: relative;
+	width: 64px;
+	height: 64px;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-input-bg);
+	box-shadow: var(--ty-shadow-inset);
+	overflow: hidden;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.typee .ty-co-item__thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.ty-co-item__qty {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 2px 6px;
+	border-bottom-left-radius: 6px;
+	background: #141418;
+	color: var(--ty-white);
+	font-size: 10px;
+	line-height: 14px;
+	font-weight: 700;
+}
+
+.ty-co-item__body {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.ty-co-item__top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+body.typee .ty-co-item__name {
+	font-size: 13.5px;
+	line-height: 18.5px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.ty-co-item__price {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	white-space: nowrap;
+}
+
+.ty-co-item__meta {
+	font-size: 11.5px;
+	line-height: 16.5px;
+	color: var(--ty-muted);
+}
+
+.ty-co-item__tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	margin-top: 2px;
+}
+
+.ty-co-item__tag {
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--co-chip-bg);
+	color: var(--ty-muted);
+	font-size: 10.5px;
+	line-height: 16px;
+}
+
+.ty-co-item__tag--accent {
+	background: rgba(255, 87, 34, 0.1);
+	color: var(--ty-accent-text);
+	font-weight: 700;
+}
+
+/* Coupon Box (Figma 82:1527) */
+.ty-co-coupon {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding-top: 12px;
+	border-top: 1px solid var(--co-border);
+}
+
+.ty-co-coupon__bar {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+}
+
+.ty-co-coupon__input-wrap {
+	position: relative;
+	flex: 1;
+}
+
+.ty-co-coupon__ic {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-muted);
+	pointer-events: none;
+}
+
+body.typee .ty-co-coupon__input {
+	width: 100%;
+	height: 40px;
+	margin: 0 !important;
+	padding: 0 12px 0 36px;
+	border: 1px solid transparent;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-input-bg);
+	color: var(--ty-ink);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	box-shadow: none;
+}
+
+body.typee .ty-co-coupon__input::placeholder {
+	text-transform: none;
+	font-weight: 500;
+	letter-spacing: 0;
+}
+
+body.typee .ty-co-coupon__btn {
+	height: 40px;
+	min-height: 0;
+	margin: 0;
+	padding: 0 16px;
+	border: 0;
+	border-radius: var(--ty-r-badge);
+	background: #141418;
+	color: var(--ty-white);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	cursor: pointer;
+	text-transform: none;
+	white-space: nowrap;
+}
+
+body.typee .ty-co-coupon__btn:hover {
+	background: var(--ty-accent);
+}
+
+.ty-co-coupon__msg {
+	font-size: 12px;
+	color: var(--ty-accent-text);
+}
+
+.ty-co-voucher-tag {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 6px 12px;
+	border-radius: var(--ty-r-xs);
+	background: var(--co-emerald-soft);
+	color: var(--co-emerald-dark);
+	font-size: 12px;
+}
+
+.ty-co-voucher-tag__left {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+body.typee .ty-co-voucher-tag__rm {
+	margin: 0;
+	padding: 2px;
+	min-height: 0;
+	border: 0;
+	background: transparent;
+	color: var(--co-emerald-dark);
+	cursor: pointer;
+	display: inline-flex;
+}
+
+/* Price Calculation Sheet (Figma 82:1546) */
+.ty-co-calc {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-top: 12px;
+	border-top: 1px solid var(--co-border);
+}
+
+.ty-co-calc__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 13.5px;
+	color: var(--ty-muted);
+}
+
+.ty-co-calc__row strong {
+	font-size: 13.5px;
+	font-weight: 600;
+	color: var(--ty-ink);
+}
+
+.ty-co-calc__row.is-discount,
+.ty-co-calc__row.is-discount strong,
+.ty-co-calc__row strong.is-emerald {
+	color: var(--co-emerald);
+}
+
+.ty-co-calc__ship-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.ty-co-calc__freeship {
+	font-style: normal;
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--co-emerald-soft);
+	color: var(--co-emerald-dark);
+	font-size: 10px;
+	font-weight: 700;
+}
+
+/* Grand Total (Figma 82:1571) */
+.ty-co-grand {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 6px;
+	padding-top: 14px;
+	border-top: 1px dashed var(--co-border);
+}
+
+.ty-co-grand__left {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.ty-co-grand__left strong {
+	font-family: var(--ty-font-display);
+	font-size: 17px;
+	line-height: 24px;
+	color: var(--ty-ink);
+}
+
+.ty-co-grand__left span {
+	font-size: 11.5px;
+	color: var(--ty-muted);
+}
+
+.ty-co-grand__right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	text-align: right;
+}
+
+.ty-co-grand__amount,
+.ty-co-grand__amount .amount {
+	font-family: var(--ty-font-display);
+	font-size: 30px;
+	line-height: 36px;
+	font-weight: 800;
+	letter-spacing: -0.025em;
+	color: var(--ty-accent);
+}
+
+.ty-co-grand__saved {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--co-emerald);
+	margin-top: 2px;
+}
+
+/* Legal & RMA Checkbox (Figma 82:1582) */
+.ty-co-legal {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	font-size: 12px;
+	line-height: 17px;
+	color: var(--ty-muted);
+	cursor: pointer;
+	margin: 0;
+}
+
+body.typee .ty-co-legal input[type="checkbox"] {
+	width: 15px;
+	height: 15px;
+	margin: 2px 0 0;
+	accent-color: var(--ty-accent);
+	flex-shrink: 0;
+}
+
+.ty-co-legal a {
+	color: var(--ty-ink);
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+.ty-co-legal a:hover {
+	color: var(--ty-accent-text);
+}
+
+/* BIG PRIMARY ACTION BUTTON #place_order (Figma 82:1588) */
+.ty-co-submit-box {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.ty-co-submit-ic {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-white);
+	pointer-events: none;
+	z-index: 2;
+	display: inline-flex;
+}
+
+.ty-co-submit-ic--left {
+	left: 20px;
+}
+
+.ty-co-submit-ic--right {
+	right: 20px;
+}
+
+body.typee .ty-co-submit-btn {
+	width: 100%;
+	height: 56px;
+	min-height: 56px;
+	margin: 0 !important;
+	padding: 0 48px !important;
+	border: 0 !important;
+	border-radius: var(--ty-r-btn) !important;
+	background: var(--ty-accent) !important;
+	color: var(--ty-white) !important;
+	font-family: var(--ty-font-display);
+	font-size: 16px !important;
+	line-height: 24px !important;
+	font-weight: 700 !important;
+	letter-spacing: -0.005em;
+	text-transform: uppercase !important;
+	box-shadow: 0 10px 18px -4px rgba(255, 87, 34, 0.32);
+	cursor: pointer;
+	transition: background-color 0.15s ease, transform 0.12s ease, opacity 0.15s ease;
+}
+
+body.typee .ty-co-submit-btn:hover {
+	background: var(--ty-accent-hover) !important;
+}
+
+body.typee form.checkout.processing .ty-co-submit-btn,
+body.typee .ty-co-submit-btn.is-loading {
+	opacity: 0.72;
+	cursor: wait;
+}
+
+/* Micro Trust Badges (Figma 82:1596) */
+.ty-co-trust {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	list-style: none;
+	margin: 0;
+	padding: 4px 0 0;
+}
+
+.ty-co-trust li {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 8px 10px;
+	border-radius: var(--ty-r-xs);
+	background: var(--co-input-bg);
+	color: var(--ty-ink);
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.ty-co-trust .ty-icon {
+	color: var(--ty-accent);
+}
+
+/* Support Callout (Figma 82:1617) */
+.ty-co-support {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 16px;
+	border-radius: var(--ty-r-card);
+	background: var(--co-chip-bg);
+	border: 1px solid var(--co-border);
+}
+
+.ty-co-support__left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ty-co-support__ic {
+	width: 40px;
+	height: 40px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	color: var(--ty-accent);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ty-co-support__left strong {
+	display: block;
+	font-size: 12.5px;
+	color: var(--ty-ink);
+}
+
+.ty-co-support__left span {
+	display: block;
+	font-size: 11.5px;
+	color: var(--ty-muted);
+}
+
+.ty-co-support__btn {
+	padding: 6px 12px;
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-size: 12.5px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.ty-co-support__btn:hover {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+}
+
+/* Thông báo lỗi WooCommerce trên trang Checkout */
+body.typee .woocommerce-NoticeGroup-checkout .woocommerce-error,
+body.typee .ty-co-shell > .woocommerce-error {
+	background: #fef2f2;
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	border-left: 4px solid var(--ty-danger);
+	border-radius: var(--ty-r-btn);
+	padding: 14px 18px;
+	margin: 0 0 20px;
+	color: #991b1b;
+	font-size: 13.5px;
+	list-style: none;
+}
+
+/* ==========================================================================
+   Trang Đặt Hàng Thành Công – Order Received (Figma 82:8375)
+   ========================================================================== */
+.ty-ty {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.ty-ty-hero {
+	position: relative;
+	background: var(--ty-white);
+	border: 1px solid var(--co-border);
+	border-radius: var(--ty-r-card);
+	box-shadow: var(--ty-shadow-sm);
+	overflow: hidden;
+}
+
+.ty-ty-hero__bar {
+	height: 4px;
+	background: linear-gradient(90deg, #10b981 0%, #ff5722 50%, #f59e0b 100%);
+}
+
+.ty-ty-hero__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 24px;
+	padding: 28px 32px;
+}
+
+.ty-ty-hero__left {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	max-width: 720px;
+}
+
+.ty-ty-hero__emblem {
+	width: 64px;
+	height: 64px;
+	border-radius: var(--ty-r-card);
+	background: var(--co-emerald-soft);
+	color: var(--co-emerald);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ty-ty-hero__copy {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.ty-ty-hero__title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+body.typee .ty-ty-hero__title {
+	font-size: 28px;
+	line-height: 36px;
+}
+
+.ty-ty-hero__badge {
+	padding: 3px 10px;
+	border-radius: var(--ty-r-xs);
+	background: var(--co-emerald-soft);
+	color: var(--co-emerald-dark);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+}
+
+.ty-ty-hero__desc {
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--co-brown);
+}
+
+.ty-ty-hero__meta-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.ty-ty-meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--co-input-bg);
+	color: var(--ty-ink);
+	font-size: 12.5px;
+}
+
+.ty-ty-meta-item--erma .ty-icon {
+	color: var(--co-emerald);
+}
+
+.ty-ty-hero__right {
+	background: var(--co-input-bg);
+	border: 1px solid var(--co-border);
+	border-radius: var(--ty-r-btn);
+	padding: 16px 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 6px;
+}
+
+.ty-ty-code__kicker {
+	font-size: 10.5px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--co-brown);
+}
+
+.ty-ty-code__row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.ty-ty-code__val {
+	font-size: 22px;
+	color: var(--ty-ink);
+}
+
+body.typee .ty-ty-copy-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	padding: 4px 10px;
+	min-height: 28px;
+	border: 1px solid var(--co-border);
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-size: 11.5px;
+	font-weight: 600;
+	cursor: pointer;
+	text-transform: none;
+}
+
+body.typee .ty-ty-copy-btn:hover {
+	border-color: var(--ty-accent);
+	color: var(--ty-accent-text);
+}
+
+.ty-ty-code__time {
+	font-size: 12px;
+	color: var(--ty-muted);
+}
+
+/* VietQR Box trên Order Received */
+.ty-ty-vietqr__body {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: 24px;
+	align-items: center;
+}
+
+.ty-ty-vietqr__qr {
+	background: var(--co-input-bg);
+	padding: 12px;
+	border-radius: var(--ty-r-btn);
+	border: 1px solid var(--co-border);
+	display: flex;
+	justify-content: center;
+}
+
+.ty-ty-vietqr__qr img {
+	border-radius: var(--ty-r-badge);
+}
+
+.ty-ty-vietqr__info {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.ty-ty-bank-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed var(--co-border);
+	font-size: 13.5px;
+}
+
+.ty-ty-bank-row:last-child {
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+
+.ty-ty-bank-row > span {
+	color: var(--ty-muted);
+}
+
+.ty-ty-bank-copy {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ty-ty-bank-row strong.is-accent {
+	color: var(--ty-accent-text);
+}
+
+.ty-ty-receiver-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.ty-ty-box {
+	background: var(--co-input-bg);
+	border-radius: var(--ty-r-btn);
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 13px;
+	color: var(--ty-muted);
+}
+
+.ty-ty-box__label {
+	font-size: 10.5px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--co-brown);
+}
+
+.ty-ty-box strong {
+	font-size: 14.5px;
+	color: var(--ty-ink);
+}
+
+.ty-ty-note {
+	margin-top: 4px;
+	padding-top: 6px;
+	border-top: 1px dashed var(--co-border);
+	color: var(--ty-accent-text);
+}
+
+.ty-ty-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 6px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+	.ty-co-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.ty-co-aside {
+		position: static;
+	}
+}
+
+@media (max-width: 767px) {
+	.ty-co-steps {
+		display: none;
+	}
+
+	.ty-co-card,
+	.ty-co-summary,
+	.ty-ty-hero__inner {
+		padding: 20px 16px;
+	}
+
+	.ty-co-billing-grid,
+	.ty-co-vat-grid,
+	.ty-co-trust,
+	.ty-ty-vietqr__body,
+	.ty-ty-receiver-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.ty-ty-hero__left {
+		flex-direction: column;
+	}
+
+	.ty-ty-hero__right {
+		width: 100%;
+		align-items: flex-start;
+	}
+}

@@ -143,8 +143,15 @@ add_action( 'template_redirect', function () {
 		$path = trim( substr( $path, strlen( $home ) ), '/' );
 	}
 	if ( 'checkout' === $path && function_exists( 'wc_get_checkout_url' ) ) {
-		wp_safe_redirect( wc_get_checkout_url(), 301 );
-		exit;
+		$target      = wc_get_checkout_url();
+		$target_path = trim( (string) wp_parse_url( $target, PHP_URL_PATH ), '/' );
+		if ( $home && 0 === strpos( $target_path, $home ) ) {
+			$target_path = trim( substr( $target_path, strlen( $home ) ), '/' );
+		}
+		if ( $target_path && 'checkout' !== $target_path ) {
+			wp_safe_redirect( $target, 301 );
+			exit;
+		}
 	}
 }, 1 );
 

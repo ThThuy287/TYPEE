@@ -15,7 +15,15 @@ $title = $key ? typee_virtual_pages()[ $key ][2] : 'Đang phát triển';
 	<div class="ty-container">
 		<?php typee_breadcrumb( array( array( $title, '' ) ) ); ?>
 		<div class="ty-empty">
-			<span class="ty-empty__ic"><?php typee_the_icon( 'construction', 28 ); ?></span>
+			<img
+				class="ty-empty__mascot"
+				src="<?php echo esc_url( TYPEE_CHILD_URI . '/assets/images/logo-mascot.png' ); ?>"
+				alt="TYPEE Mascot"
+				width="84"
+				height="96"
+				loading="lazy"
+				decoding="async"
+			/>
 			<h1 class="ty-empty__title"><?php echo esc_html( $title ); ?></h1>
 			<p class="ty-empty__desc">Màn hình này đang được hoàn thiện.</p>
 			<div class="ty-empty__actions">

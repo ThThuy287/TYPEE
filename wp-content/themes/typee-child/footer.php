@@ -22,7 +22,17 @@ $cats = get_terms(
 	<div class="ty-container">
 		<div class="ty-footer__grid">
 			<div class="ty-footer__col ty-footer__about">
-				<div class="ty-footer__brand">TYPEE</div>
+				<a class="ty-footer__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="TYPEE – Trang chủ">
+					<img
+						class="ty-footer__logo"
+						src="<?php echo esc_url( TYPEE_CHILD_URI . '/assets/images/logo-wordmark-light.png' ); ?>"
+						alt="TYPEE"
+						width="132"
+						height="30"
+						loading="lazy"
+						decoding="async"
+					/>
+				</a>
 				<p class="ty-footer__desc">Studio cơ học chuyên phân phối bàn phím custom cao cấp, kit nhôm CNC nguyên khối, switch mượt mà và keycap chính hãng.</p>
 				<ul class="ty-footer__contact">
 					<li><strong>Hà Nội:</strong> <?php echo esc_html( typee_copy( 'address_hn' ) ); ?></li>

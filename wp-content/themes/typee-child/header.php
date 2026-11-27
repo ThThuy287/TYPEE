@@ -93,17 +93,32 @@ $nav = array(
 		<!-- Thanh chính -->
 		<div class="ty-mainbar">
 			<div class="ty-container ty-mainbar__inner">
-				<a class="ty-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
+				<a class="ty-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="TYPEE – Trang chủ">
 					<?php
-					if ( has_custom_logo() ) {
-						$logo_id = get_theme_mod( 'custom_logo' );
-						echo wp_get_attachment_image( $logo_id, 'full', false, array( 'class' => 'ty-brand__logo', 'alt' => get_bloginfo( 'name' ) ) );
-					}
+					$logo_desktop = TYPEE_CHILD_URI . '/assets/images/logo-horizontal-light.png';
+					$logo_mobile  = TYPEE_CHILD_URI . '/assets/images/logo-mascot.png';
 					?>
-					<span class="ty-brand__text">
-						<span class="ty-brand__name">TYPEE</span>
-						<span class="ty-brand__tag"><?php echo esc_html( typee_copy( 'brand_tagline' ) ); ?></span>
-					</span>
+					<img
+						class="ty-brand__img ty-brand__img--desktop"
+						src="<?php echo esc_url( $logo_desktop ); ?>"
+						alt="TYPEE – <?php echo esc_attr( typee_copy( 'brand_tagline' ) ); ?>"
+						width="160"
+						height="54"
+						loading="eager"
+						fetchpriority="high"
+						decoding="async"
+					/>
+					<img
+						class="ty-brand__img ty-brand__img--mobile"
+						src="<?php echo esc_url( $logo_mobile ); ?>"
+						alt="TYPEE"
+						width="38"
+						height="43"
+						loading="eager"
+						fetchpriority="high"
+						decoding="async"
+					/>
+					<span class="ty-brand__mobile-name" aria-hidden="true">TYPEE</span>
 				</a>
 
 				<div class="ty-search">

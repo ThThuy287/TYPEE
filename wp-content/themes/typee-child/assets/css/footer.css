@@ -5,7 +5,8 @@
 .ty-footer .ty-container { padding-top: 40px; padding-bottom: 40px; display: flex; flex-direction: column; gap: 40px; }
 .ty-footer__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .ty-footer__col { display: flex; flex-direction: column; gap: 16px; }
-.ty-footer__brand { font-family: var(--ty-font-display); font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.09px; color: var(--ty-on-dark); }
+.ty-footer__brand { display: inline-flex; align-items: center; width: fit-content; }
+.ty-footer__logo { display: block; height: 28px; width: auto; max-width: 160px; object-fit: contain; }
 .ty-footer__desc { font-size: 14px; line-height: 22px; color: var(--ty-on-dark-80); }
 .ty-footer__contact, .ty-footer__list, .ty-footer__policy { list-style: none; margin: 0; padding: 0; }
 .ty-footer__contact { display: flex; flex-direction: column; gap: 4px; }

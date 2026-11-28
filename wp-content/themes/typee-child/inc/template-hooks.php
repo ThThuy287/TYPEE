@@ -133,24 +133,3 @@ add_filter( 'woocommerce_add_to_cart_fragments', function ( $fragments ) {
 	$fragments['div.ty-sidecart__content'] = typee_sidecart_content();
 	return $fragments;
 } );
-
-/**
- * Logo dọc đầy đủ kèm slogan trên trang Đăng nhập / Đăng ký WooCommerce.
- */
-add_action( 'woocommerce_before_customer_login_form', function () {
-	?>
-	<div class="ty-auth-brand">
-		<a class="ty-auth-brand__link" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="TYPEE – Trang chủ">
-			<img
-				class="ty-auth-brand__img"
-				src="<?php echo esc_url( TYPEE_CHILD_URI . '/assets/images/logo-full-tagline.png' ); ?>"
-				alt="TYPEE – Bàn phím theo cách của bạn"
-				width="210"
-				height="161"
-				loading="eager"
-				decoding="async"
-			/>
-		</a>
-	</div>
-	<?php
-} );

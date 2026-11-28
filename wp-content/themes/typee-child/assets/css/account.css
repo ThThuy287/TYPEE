@@ -1,0 +1,6069 @@
+/* ==========================================================================
+   TYPEE Child – Khu vực Tài khoản & Xác thực (Account Layout Shell + Auth)
+   Figma tham chiếu:
+   - 82:5715 (Đăng nhập & Đăng ký Split-screen)
+   - 82:5941 (Khôi phục mật khẩu Card 480px)
+   - 82:7120 / 82:7135 (Khung Layout Shell & Sidebar Tài khoản)
+
+   Phạm vi cô lập tuyệt đối:
+   - Chỉ nạp trên trang Tài khoản (`is_account_page()`).
+   - Toàn bộ class dùng tiền tố `.typee-account-*` và `.typee-auth-*`.
+   - Không ghi đè CSS toàn cục hay làm thay đổi bất kỳ trang nào khác.
+   ========================================================================== */
+
+/* ---------- 0. Chuẩn hóa khung Flatsome CHỈ trên trang Tài khoản ---------- */
+body.typee.typee-account-page #content.page-wrapper {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+body.typee.typee-account-page #content.page-wrapper > .row-main {
+	max-width: none;
+	margin: 0;
+	padding: 0;
+}
+body.typee.typee-account-page #content.page-wrapper > .row-main > .col {
+	max-width: none;
+	flex-basis: 100%;
+	padding: 0;
+}
+body.typee.typee-account-page #content.page-wrapper > .row-main > .col > .col-inner {
+	padding: 0;
+}
+body.typee.typee-account-page .entry-header {
+	display: none;
+}
+body.typee.typee-account-page .woocommerce {
+	margin: 0;
+	padding: 0;
+}
+
+/* ==========================================================================
+   1. LAYOUT SHELL CỐ ĐỊNH CHO TOÀN BỘ TRANG TÀI KHOẢN (ĐÃ ĐĂNG NHẬP)
+   ========================================================================== */
+.typee-account-shell {
+	--ty-acc-soft: #f5f2fb;
+	--ty-acc-chip: #efecf5;
+	--ty-acc-line: #e4e1ea;
+	--ty-acc-warm: #5b4039;
+	--ty-acc-active-bg: #fff0eb;
+
+	background: var(--ty-canvas);
+	padding: 28px 0 64px;
+	min-height: 620px;
+}
+
+.typee-account-container {
+	width: 100%;
+	max-width: var(--ty-container);
+	margin: 0 auto;
+	padding-left: var(--ty-gutter);
+	padding-right: var(--ty-gutter);
+	box-sizing: border-box;
+}
+
+/* Breadcrumb cố định vị trí và chiều cao trên mọi tab */
+.typee-account-breadcrumb {
+	min-height: 24px;
+	margin: 0 0 24px;
+	display: flex;
+	align-items: center;
+}
+
+.typee-account-breadcrumb__list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+}
+
+.typee-account-breadcrumb__item,
+.typee-account-breadcrumb__sep {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+}
+
+.typee-account-breadcrumb__link {
+	color: var(--ty-acc-warm);
+	transition: color 0.15s ease;
+}
+
+.typee-account-breadcrumb__link:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-breadcrumb__sep {
+	color: var(--ty-muted);
+	opacity: 0.65;
+}
+
+.typee-account-breadcrumb__current {
+	color: var(--ty-accent-text);
+	font-weight: 700;
+}
+
+/* Nút bật/tắt sidebar trên Mobile & Tablet (ẩn trên Desktop) */
+.typee-account-mobile-bar {
+	display: none;
+	margin-bottom: 16px;
+}
+
+body.typee .typee-account-mobile-toggle {
+	width: 100%;
+	min-height: var(--ty-tap);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 16px;
+	margin: 0;
+	background: var(--ty-white);
+	border: 1px solid var(--ty-border);
+	border-radius: var(--ty-r-btn);
+	color: var(--ty-ink);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0;
+	cursor: pointer;
+	box-shadow: var(--ty-shadow-sm);
+}
+
+.typee-account-mobile-toggle__left {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.typee-account-mobile-toggle__caret {
+	transition: transform 0.2s ease;
+}
+
+.typee-account-mobile-toggle[aria-expanded="true"] .typee-account-mobile-toggle__caret {
+	transform: rotate(180deg);
+}
+
+/* Grid 2 cột CỐ ĐỊNH tuyệt đối: Sidebar 300px + Main minmax(0, 1fr) */
+.typee-account-grid {
+	display: grid;
+	grid-template-columns: 300px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+
+.typee-account-sidebar {
+	width: 300px;
+	min-width: 0;
+	position: sticky;
+	top: 24px;
+}
+
+.typee-account-sidebar-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* ---------- Sidebar Card 1: Hồ sơ người dùng & Tiến độ hạng ---------- */
+.typee-account-profile {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 18px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-profile__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+
+.typee-account-profile__avatar {
+	position: relative;
+	width: 56px;
+	height: 56px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-chip);
+	overflow: visible;
+}
+
+.typee-account-profile__avatar-img {
+	width: 56px;
+	height: 56px;
+	border-radius: var(--ty-r-btn);
+	object-fit: cover;
+	display: block;
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-profile__status-dot {
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	width: 14px;
+	height: 14px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent);
+	border: 2px solid var(--ty-white);
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.typee-account-profile__meta {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+body.typee .typee-account-profile__name {
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.typee-account-profile__email {
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.typee-account-profile__code {
+	display: inline-block;
+	margin-top: 2px;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+}
+
+/* Khối tiến độ hạng tích lũy */
+.typee-account-tier {
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-btn);
+	padding: 10px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.typee-account-tier__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.typee-account-tier__name {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-tier__icon {
+	color: var(--ty-accent);
+}
+
+.typee-account-tier__pct {
+	font-size: 11px;
+	line-height: 14px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-tier__bar {
+	width: 100%;
+	height: 8px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-acc-line);
+	overflow: hidden;
+}
+
+.typee-account-tier__fill {
+	display: block;
+	height: 100%;
+	border-radius: var(--ty-r-lg);
+	background: linear-gradient(90deg, var(--ty-accent) 0%, #ff7a45 100%);
+	transition: width 0.35s ease;
+}
+
+.typee-account-tier__note {
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-tier__note strong {
+	color: var(--ty-ink);
+	font-weight: 700;
+}
+
+/* ---------- Sidebar Card 2: Menu điều hướng dọc cố định ---------- */
+.typee-account-nav {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 8px;
+	box-shadow: var(--ty-shadow-sm);
+}
+
+.typee-account-nav__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.typee-account-nav__item {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.typee-account-nav__link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	min-height: 44px;
+	padding: 10px 12px;
+	border-radius: var(--ty-r-badge);
+	border-left: 3px solid transparent;
+	color: var(--ty-ink);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.typee-account-nav__link:hover {
+	background: var(--ty-acc-soft);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-nav__label-group {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.typee-account-nav__icon {
+	color: var(--ty-acc-warm);
+	flex-shrink: 0;
+	transition: color 0.15s ease;
+}
+
+.typee-account-nav__link:hover .typee-account-nav__icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-nav__text {
+	min-width: 0;
+}
+
+.typee-account-nav__badge {
+	flex-shrink: 0;
+	padding: 2px 8px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-acc-chip);
+	color: var(--ty-acc-warm);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.typee-account-nav__badge--accent {
+	background: var(--ty-acc-chip);
+	color: var(--ty-accent-text);
+}
+
+/* Trạng thái tab đang ACTIVE (Figma 82:7175) */
+.typee-account-nav__item--active > .typee-account-nav__link,
+.typee-account-nav__item.is-active > .typee-account-nav__link {
+	background: var(--ty-acc-active-bg);
+	border-left-color: var(--ty-accent);
+	color: var(--ty-accent-text);
+	font-weight: 700;
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.typee-account-nav__item--active .typee-account-nav__icon,
+.typee-account-nav__item.is-active .typee-account-nav__icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-nav__item--active .typee-account-nav__badge,
+.typee-account-nav__item.is-active .typee-account-nav__badge {
+	background: var(--ty-accent-text);
+	color: var(--ty-white);
+}
+
+/* Nút Đăng xuất cố định dưới cùng */
+.typee-account-nav__footer {
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-nav__logout {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	padding: 10px 12px;
+	border-radius: var(--ty-r-badge);
+	color: var(--ty-danger-text);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-account-nav__logout:hover {
+	background: rgba(239, 68, 68, 0.08);
+	color: #991b1b;
+}
+
+.typee-account-nav__logout-icon {
+	color: currentColor;
+}
+
+/* ---------- Sidebar Card 3: Hỗ trợ Kỹ thuật & Modding Lab ---------- */
+.typee-account-support {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 16px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-support__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.typee-account-support__eyebrow {
+	font-size: 11px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-acc-warm);
+	text-transform: uppercase;
+}
+
+.typee-account-support__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent);
+}
+
+.typee-account-support__body {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-account-support__avatar {
+	width: 44px;
+	height: 44px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-chip);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-support__info {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+body.typee .typee-account-support__name {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-support__role {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-support__phone {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-support__actions {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	padding-top: 4px;
+}
+
+.typee-account-support__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 36px;
+	padding: 6px 10px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-chip);
+	color: var(--ty-ink);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-account-support__btn:hover {
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+}
+
+/* ---------- Vùng nội dung chính bên phải (cố định ổn định, chống vỡ grid) ---------- */
+.typee-account-main {
+	min-width: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-content {
+	min-width: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	box-sizing: border-box;
+}
+
+/* Các endpoint mặc định chưa tách multi-card (vd fallback plugin) tự bọc nền thẻ trắng */
+.typee-account-shell:not([data-endpoint="dashboard"]):not([data-endpoint="orders"]):not([data-endpoint="view-order"]):not([data-endpoint="edit-account"]):not([data-endpoint="edit-address"]):not([data-endpoint="saved-builds"]):not([data-endpoint="wishlist"]) .typee-account-content {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 28px;
+	box-shadow: var(--ty-shadow-sm);
+	overflow-x: auto;
+}
+
+.typee-account-notices:empty {
+	display: none;
+}
+
+/* Fallback trạng thái cho endpoint tùy biến chưa gắn template riêng */
+.typee-account-placeholder {
+	padding: 40px 20px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-account-placeholder__icon {
+	width: 56px;
+	height: 56px;
+	border-radius: var(--ty-r-card);
+	background: var(--ty-accent-light);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.typee .typee-account-placeholder__title {
+	font-size: 22px;
+	line-height: 30px;
+	color: var(--ty-ink);
+}
+
+.typee-account-placeholder__desc {
+	max-width: 480px;
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-muted);
+}
+
+.typee-account-placeholder__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+/* ==========================================================================
+   2. THÔNG BÁO LỖI / THÀNH CÔNG WOOCOMMERCE (CÔ LẬP TRONG ACCOUNT & AUTH)
+   ========================================================================== */
+.typee-account-notices ul,
+.typee-auth-notices ul,
+.typee-account-notices .woocommerce-message,
+.typee-account-notices .woocommerce-info,
+.typee-account-notices .woocommerce-error,
+.typee-auth-notices .woocommerce-message,
+.typee-auth-notices .woocommerce-info,
+.typee-auth-notices .woocommerce-error {
+	list-style: none;
+	margin: 0 0 12px;
+	padding: 14px 16px;
+	border-radius: var(--ty-r-btn);
+	font-size: 13px;
+	line-height: 20px;
+	border: 1px solid transparent;
+}
+
+.typee-account-notices .woocommerce-error,
+.typee-auth-notices .woocommerce-error {
+	background: #fef2f2;
+	border-color: #fecaca;
+	color: #991b1b;
+}
+
+.typee-account-notices .woocommerce-message,
+.typee-auth-notices .woocommerce-message {
+	background: #ecfdf5;
+	border-color: #a7f3d0;
+	color: #065f46;
+}
+
+.typee-account-notices .woocommerce-info,
+.typee-auth-notices .woocommerce-info {
+	background: #eff6ff;
+	border-color: #bfdbfe;
+	color: #1e40af;
+}
+
+.typee-account-notices li,
+.typee-auth-notices li {
+	margin: 0;
+}
+
+.typee-account-notices li + li,
+.typee-auth-notices li + li {
+	margin-top: 6px;
+}
+
+.typee-account-notices a,
+.typee-auth-notices a {
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.typee-auth-notices:empty {
+	display: none;
+}
+
+/* ==========================================================================
+   3. TRANG ĐĂNG NHẬP & ĐĂNG KÝ SPLIT-SCREEN (FIGMA 82:5715)
+   ========================================================================== */
+.typee-auth-page {
+	--ty-auth-soft: #f5f2fb;
+	--ty-auth-chip: #efecf5;
+	--ty-auth-seg: #eae7ef;
+	--ty-auth-line: #e4e1ea;
+	--ty-auth-warm: #5b4039;
+	--ty-auth-sub: #5f5e63;
+	--ty-auth-dark: #303036;
+
+	background: var(--ty-canvas);
+	padding-bottom: 56px;
+}
+
+.typee-auth-container {
+	width: 100%;
+	max-width: var(--ty-container);
+	margin: 0 auto;
+	padding-left: var(--ty-gutter);
+	padding-right: var(--ty-gutter);
+	box-sizing: border-box;
+}
+
+/* Top Navigation Utility Bar (Figma 82:5718) */
+.typee-auth-topbar {
+	background: rgba(255, 255, 255, 0.85);
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	border-bottom: 1px solid var(--ty-auth-line);
+	padding: 10px 0;
+}
+
+.typee-auth-topbar__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-auth-topbar__left {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-auth-back-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-auth-chip);
+	color: var(--ty-ink);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-auth-back-pill .ty-icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-back-pill:hover {
+	background: var(--ty-auth-line);
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-online-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 5px 10px;
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-auth-soft);
+	color: var(--ty-auth-warm);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 500;
+}
+
+.typee-auth-online-pill__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-success);
+	flex-shrink: 0;
+}
+
+.typee-auth-topbar__brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.typee-auth-topbar__wordmark {
+	font-family: var(--ty-font-display);
+	font-size: 18px;
+	line-height: 24px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--ty-ink);
+}
+
+.typee-auth-topbar__tag {
+	padding: 2px 7px;
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-accent-text);
+	color: var(--ty-white);
+	font-size: 10px;
+	line-height: 18px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+/* Main Split-Screen 12-Col Grid (Figma 82:5734) */
+.typee-auth-split-wrap {
+	padding-top: 36px;
+}
+
+.typee-auth-split {
+	display: grid;
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	gap: 24px;
+	align-items: start;
+}
+
+/* ---------- LEFT COLUMN (5 cols): Showcase & Benefits ---------- */
+.typee-auth-showcase {
+	grid-column: span 5;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	min-width: 0;
+}
+
+.typee-auth-manifesto {
+	position: relative;
+	border-radius: var(--ty-r-card);
+	background: var(--ty-auth-dark);
+	overflow: hidden;
+	box-shadow: var(--ty-shadow-lg);
+}
+
+.typee-auth-manifesto__bg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+.typee-auth-manifesto__overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		180deg,
+		rgba(48, 48, 54, 0.82) 0%,
+		rgba(48, 48, 54, 0.94) 52%,
+		rgba(15, 17, 23, 0.98) 100%
+	);
+	pointer-events: none;
+}
+
+.typee-auth-manifesto__inner {
+	position: relative;
+	z-index: 1;
+	padding: 36px 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.typee-auth-manifesto__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.typee-auth-manifesto__pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 10px;
+	border-radius: var(--ty-r-xs);
+	background: rgba(255, 255, 255, 0.14);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	color: var(--ty-canvas);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+}
+
+.typee-auth-manifesto__pill-icon {
+	color: var(--ty-accent);
+}
+
+.typee-auth-manifesto__est {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 500;
+	color: rgba(228, 225, 231, 0.85);
+}
+
+.typee-auth-manifesto__quote {
+	padding: 12px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+body.typee .typee-auth-manifesto__title {
+	font-family: var(--ty-font-display);
+	font-size: 30px;
+	line-height: 38px;
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	color: var(--ty-canvas);
+}
+
+.typee-auth-manifesto__desc {
+	font-size: 14px;
+	line-height: 22px;
+	color: rgba(228, 225, 234, 0.9);
+}
+
+.typee-auth-manifesto__stats {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 16px;
+	border-radius: var(--ty-r-btn);
+	background: rgba(48, 48, 54, 0.65);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+}
+
+.typee-auth-manifesto__stats-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-auth-manifesto__stats-icon {
+	width: 40px;
+	height: 40px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-auth-manifesto__stats-num {
+	display: block;
+	font-family: var(--ty-font-display);
+	font-size: 18px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-canvas);
+}
+
+.typee-auth-manifesto__stats-label {
+	display: block;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-auth-line);
+}
+
+.typee-auth-manifesto__stats-badge {
+	color: var(--ty-peach);
+}
+
+/* 3 Exclusive Membership Benefits Card (Figma 82:5766) */
+.typee-auth-benefits {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-card);
+	padding: 24px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-auth-benefits__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.typee-auth-benefits__title-wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.typee-auth-benefits__head-icon {
+	color: var(--ty-accent-text);
+}
+
+body.typee .typee-auth-benefits__title {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	color: var(--ty-ink);
+	text-transform: uppercase;
+}
+
+.typee-auth-benefits__tag {
+	padding: 2px 8px;
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-auth-chip);
+	color: var(--ty-auth-sub);
+	font-size: 11px;
+	line-height: 18px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.typee-auth-benefits__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-auth-benefit {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px;
+	margin: 0;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-auth-soft);
+}
+
+.typee-auth-benefit__icon {
+	width: 34px;
+	height: 34px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-auth-line);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-auth-benefit__body {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.typee-auth-benefit__heading-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.typee-auth-benefit__heading {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-auth-benefit__code {
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--ty-accent-text);
+	color: var(--ty-white);
+	font-size: 11px;
+	line-height: 18px;
+	font-weight: 700;
+}
+
+.typee-auth-benefit__desc {
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-auth-warm);
+}
+
+/* Builder Review Inset (Figma 82:5810) */
+.typee-auth-review {
+	padding: 14px 16px;
+	border-radius: var(--ty-r-btn);
+	background: rgba(234, 231, 239, 0.65);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-auth-review__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.typee-auth-review__stars {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.typee-auth-review__star {
+	color: var(--ty-warning);
+}
+
+.typee-auth-review__label {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-review__quote {
+	font-size: 12px;
+	line-height: 18px;
+	font-style: italic;
+	color: var(--ty-ink);
+}
+
+.typee-auth-review__author {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding-top: 2px;
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-review__author strong {
+	color: var(--ty-ink);
+	font-weight: 700;
+	letter-spacing: 0.03em;
+}
+
+/* ---------- RIGHT COLUMN (7 cols): Interactive Auth Panel ---------- */
+.typee-auth-panel {
+	grid-column: span 7;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+
+/* Studio Header Greeting (Figma 82:5833) */
+.typee-auth-greeting {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-card);
+	padding: 24px 28px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-auth-greeting__meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.typee-auth-greeting__eyebrow {
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-accent-text);
+	text-transform: uppercase;
+}
+
+.typee-auth-greeting__id {
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 500;
+	color: var(--ty-auth-sub);
+}
+
+body.typee .typee-auth-greeting__title {
+	font-family: var(--ty-font-display);
+	font-size: 30px;
+	line-height: 38px;
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	color: var(--ty-ink);
+}
+
+.typee-auth-greeting__desc {
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-auth-warm);
+}
+
+/* Segmented Tab Switcher (Figma 82:5843) */
+.typee-auth-tabs {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+	padding: 6px;
+	border-radius: var(--ty-r-card);
+	background: var(--ty-auth-seg);
+	box-shadow: var(--ty-shadow-inset);
+}
+
+body.typee .typee-auth-tab {
+	min-height: var(--ty-tap);
+	margin: 0;
+	padding: 10px 16px;
+	border: 0;
+	border-radius: var(--ty-r-btn);
+	background: transparent;
+	color: var(--ty-auth-sub);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	text-transform: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+body.typee .typee-auth-tab:hover {
+	color: var(--ty-ink);
+}
+
+body.typee .typee-auth-tab.is-active,
+body.typee .typee-auth-tab[aria-selected="true"] {
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	box-shadow: var(--ty-shadow-sm);
+}
+
+.typee-auth-tab__icon {
+	color: currentColor;
+}
+
+body.typee .typee-auth-tab.is-active .typee-auth-tab__icon,
+body.typee .typee-auth-tab[aria-selected="true"] .typee-auth-tab__icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-tab__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent-text);
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.typee-auth-tab.is-active .typee-auth-tab__dot,
+.typee-auth-tab[aria-selected="true"] .typee-auth-tab__dot {
+	opacity: 1;
+}
+
+.typee-auth-tab__badge {
+	padding: 2px 7px;
+	border-radius: var(--ty-r-xs);
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+}
+
+/* Main Auth Form Card (Figma 82:5858) */
+.typee-auth-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-card);
+	padding: 36px;
+	box-shadow: var(--ty-shadow-md);
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+.typee-auth-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0;
+}
+
+.typee-auth-row-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px;
+}
+
+.typee-auth-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-auth-field__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.typee-auth-field__label {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+.typee-auth-field__req,
+.typee-auth-field__opt {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-auth-sub);
+}
+
+.typee-auth-field__req--upper {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--ty-auth-warm);
+	text-transform: uppercase;
+}
+
+.typee-auth-forgot-link {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-forgot-link:hover {
+	text-decoration: underline;
+}
+
+.typee-auth-input-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.typee-auth-input-icon {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-auth-sub);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+body.typee .typee-auth-input {
+	width: 100%;
+	min-height: 48px;
+	height: auto;
+	margin: 0;
+	padding: 12px 16px 12px 42px;
+	box-sizing: border-box;
+	background: var(--ty-auth-soft);
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-btn);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--ty-ink);
+	box-shadow: none;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.typee .typee-auth-input::placeholder {
+	color: rgba(95, 94, 99, 0.72);
+}
+
+body.typee .typee-auth-input--white {
+	background: var(--ty-white);
+}
+
+body.typee .typee-auth-input--pw {
+	padding-right: 48px;
+}
+
+body.typee .typee-auth-input:focus {
+	background: var(--ty-white);
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-focus);
+	outline: none;
+}
+
+/* Nút ẩn/hiện mật khẩu & nút xóa nhanh */
+body.typee .typee-auth-pw-toggle,
+body.typee .typee-auth-clear-btn {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 36px;
+	height: 36px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--ty-r-badge);
+	background: transparent;
+	color: var(--ty-auth-sub);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.typee .typee-auth-pw-toggle:hover,
+body.typee .typee-auth-clear-btn:hover {
+	background: var(--ty-auth-chip);
+	color: var(--ty-ink);
+}
+
+.typee-auth-pw-toggle__eye {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Đo độ mạnh mật khẩu & xác nhận khớp */
+.typee-auth-strength {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding-top: 2px;
+}
+
+.typee-auth-strength__track {
+	flex: 1;
+	height: 5px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-auth-line);
+	overflow: hidden;
+}
+
+.typee-auth-strength__bar {
+	display: block;
+	height: 100%;
+	width: 0;
+	border-radius: var(--ty-r-lg);
+	transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.typee-auth-strength__bar.is-weak { background: var(--ty-danger); width: 33%; }
+.typee-auth-strength__bar.is-medium { background: var(--ty-warning); width: 66%; }
+.typee-auth-strength__bar.is-strong { background: var(--ty-success); width: 100%; }
+
+.typee-auth-strength__label {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-auth-sub);
+	white-space: nowrap;
+}
+
+.typee-auth-match-msg {
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 600;
+}
+
+.typee-auth-match-msg.is-ok { color: var(--ty-success-text); }
+.typee-auth-match-msg.is-err { color: var(--ty-danger-text); }
+
+/* Hàng Ghi nhớ đăng nhập + SSL */
+.typee-auth-remember-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 2px 0;
+}
+
+.typee-auth-checkbox {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+body.typee .typee-auth-checkbox__input {
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	accent-color: var(--ty-accent-text);
+	cursor: pointer;
+}
+
+.typee-auth-ssl-note {
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-auth-sub);
+}
+
+/* Info box & Voucher strip cho Tab Đăng ký */
+.typee-auth-info-box {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 12px 14px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-auth-soft);
+	border: 1px solid var(--ty-auth-line);
+	font-size: 13px;
+	line-height: 19px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-info-box__icon {
+	color: var(--ty-accent-text);
+	margin-top: 2px;
+}
+
+.typee-auth-voucher-strip {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-accent-light);
+	color: var(--ty-accent-text);
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.typee-auth-voucher-strip__icon {
+	color: var(--ty-accent);
+}
+
+/* Nút Submit CTA chính (#FF5722) */
+body.typee .typee-auth-submit {
+	width: 100%;
+	min-height: 48px;
+	margin: 4px 0 0;
+	padding: 13px 24px;
+	border: 0;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	box-shadow: 0 6px 16px rgba(255, 87, 34, 0.28);
+	transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.typee .typee-auth-submit:hover {
+	background: var(--ty-accent-hover);
+	color: var(--ty-white);
+	box-shadow: 0 8px 20px rgba(244, 81, 30, 0.34);
+}
+
+body.typee .typee-auth-submit:active {
+	transform: translateY(1px);
+}
+
+body.typee .typee-auth-submit--recovery {
+	text-transform: none;
+	letter-spacing: 0.01em;
+}
+
+/* Divider (Figma 82:5899) */
+.typee-auth-divider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.typee-auth-divider::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	height: 1px;
+	background: var(--ty-auth-line);
+}
+
+.typee-auth-divider span {
+	position: relative;
+	z-index: 1;
+	padding: 0 14px;
+	background: var(--ty-white);
+	font-size: 11px;
+	line-height: 14px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	color: var(--ty-auth-sub);
+	text-transform: uppercase;
+}
+
+/* Social Buttons (Figma 82:5903) */
+.typee-auth-socials {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px;
+}
+
+body.typee .typee-auth-social-btn {
+	min-height: var(--ty-tap);
+	margin: 0;
+	padding: 10px 14px;
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-auth-soft);
+	color: var(--ty-ink);
+	font-family: var(--ty-font-body);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+body.typee .typee-auth-social-btn:hover {
+	background: var(--ty-auth-chip);
+	border-color: #d2cddb;
+}
+
+.typee-auth-social-btn__svg {
+	flex-shrink: 0;
+}
+
+.typee-auth-social-msg {
+	margin-top: -12px;
+	padding: 10px 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-auth-soft);
+	border: 1px solid var(--ty-auth-line);
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-auth-warm);
+	text-align: center;
+}
+
+/* Footnote Banner (Figma 82:5917) */
+.typee-auth-footnote {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 12px 14px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-auth-chip);
+}
+
+.typee-auth-footnote__text {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-ink);
+}
+
+.typee-auth-footnote__icon {
+	color: var(--ty-accent-text);
+}
+
+body.typee .typee-auth-footnote__btn {
+	margin: 0;
+	padding: 4px 6px;
+	min-height: 0;
+	border: 0;
+	background: transparent;
+	color: var(--ty-accent-text);
+	font-family: var(--ty-font-body);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	text-transform: none;
+	letter-spacing: 0.02em;
+	cursor: pointer;
+}
+
+body.typee .typee-auth-footnote__btn:hover {
+	text-decoration: underline;
+}
+
+/* Studio Micro-Specs Utility Bar (Figma 82:5925) */
+.typee-auth-specs {
+	padding: 14px 18px;
+	border-radius: var(--ty-r-card);
+	background: var(--ty-auth-soft);
+	border: 1px solid var(--ty-auth-line);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-auth-specs__row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 500;
+	color: var(--ty-auth-sub);
+}
+
+.typee-auth-specs__icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-specs__meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-auth-sub);
+}
+
+.typee-auth-specs__hotline {
+	font-weight: 700;
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-specs__hotline:hover {
+	text-decoration: underline;
+}
+
+/* ==========================================================================
+   4. TRANG KHÔI PHỤC & ĐẶT LẠI MẬT KHẨU – CARD 480PX (FIGMA 82:5941)
+   ========================================================================== */
+.typee-auth-recovery-page {
+	--ty-auth-soft: #f5f2fb;
+	--ty-auth-chip: #efecf5;
+	--ty-auth-seg: #eae7ef;
+	--ty-auth-line: #e4e1ea;
+	--ty-auth-warm: #5b4039;
+	--ty-auth-sub: #5f5e63;
+
+	position: relative;
+	overflow: hidden;
+	background: var(--ty-auth-soft);
+	padding: 40px var(--ty-gutter) 56px;
+	display: flex;
+	justify-content: center;
+	min-height: 620px;
+}
+
+.typee-auth-recovery-glow {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.typee-auth-recovery-glow--tr {
+	width: 380px;
+	height: 380px;
+	right: -80px;
+	top: 80px;
+	background: rgba(255, 219, 209, 0.35);
+	filter: blur(64px);
+}
+
+.typee-auth-recovery-glow--bl {
+	width: 320px;
+	height: 320px;
+	left: -80px;
+	bottom: 20px;
+	background: rgba(228, 225, 231, 0.5);
+	filter: blur(48px);
+}
+
+.typee-auth-recovery-wrap {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 480px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* Header bar 480px (Figma 82:5947) */
+.typee-auth-recovery-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 4px 0;
+}
+
+.typee-auth-recovery-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--ty-auth-warm);
+	transition: color 0.15s ease;
+}
+
+.typee-auth-recovery-back:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-recovery-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-auth-chip);
+	color: var(--ty-auth-warm);
+	font-size: 11px;
+	line-height: 18px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+}
+
+.typee-auth-recovery-badge__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent);
+}
+
+/* Card trắng 480px (Figma 82:5958) */
+.typee-auth-recovery-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-auth-line);
+	border-radius: var(--ty-r-card);
+	padding: 36px;
+	box-shadow: 0 12px 40px -10px rgba(27, 27, 33, 0.09);
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-auth-recovery-card__top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.typee-auth-recovery-emblem {
+	position: relative;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--ty-r-btn);
+	background: rgba(255, 219, 209, 0.45);
+	box-shadow: var(--ty-shadow-sm);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-auth-recovery-emblem__main {
+	color: var(--ty-accent);
+}
+
+.typee-auth-recovery-emblem--success {
+	background: #ecfdf5;
+}
+
+.typee-auth-recovery-emblem--success .typee-auth-recovery-emblem__main {
+	color: #059669;
+}
+
+.typee-auth-recovery-emblem__sub {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	width: 22px;
+	height: 22px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-auth-line);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.typee-auth-recovery-proto {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+	text-align: right;
+}
+
+.typee-auth-recovery-proto__tag {
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: var(--ty-auth-seg);
+	color: var(--ty-auth-warm);
+	font-size: 10px;
+	line-height: 18px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.typee-auth-recovery-proto__code {
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-recovery-intro {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-auth-recovery-intro__kicker {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.typee-auth-recovery-intro__eyebrow {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-accent);
+	text-transform: uppercase;
+}
+
+.typee-auth-recovery-intro__slash {
+	font-size: 11px;
+	line-height: 16px;
+	color: #c9a79d;
+}
+
+body.typee .typee-auth-recovery-intro__title {
+	font-family: var(--ty-font-display);
+	font-size: 30px;
+	line-height: 38px;
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	color: var(--ty-ink);
+}
+
+.typee-auth-recovery-intro__desc {
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-field__hint {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-auth-warm);
+	padding-top: 2px;
+}
+
+.typee-auth-field__hint .ty-icon {
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+
+/* Banner xác nhận gửi email thành công (Figma 82:5985) */
+.typee-auth-confirm {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 16px;
+	border-radius: var(--ty-r-btn);
+	background: #ecfdf5;
+	border: 1px solid #a7f3d0;
+}
+
+.typee-auth-confirm__icon {
+	color: #059669;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.typee-auth-confirm__body {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+body.typee .typee-auth-confirm__title {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: #065f46;
+}
+
+.typee-auth-confirm__desc {
+	font-size: 12px;
+	line-height: 18px;
+	color: #047857;
+}
+
+.typee-auth-confirm__desc strong {
+	color: #065f46;
+	font-weight: 700;
+}
+
+.typee-auth-confirm__strip {
+	margin-top: 4px;
+	padding: 10px 12px;
+	border-radius: var(--ty-r-badge);
+	background: rgba(209, 250, 229, 0.58);
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 11px;
+	line-height: 18px;
+	color: #065f46;
+}
+
+.typee-auth-confirm__resend-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.typee-auth-confirm__resend {
+	font-weight: 700;
+	color: #047857;
+	text-decoration: underline;
+}
+
+.typee-auth-confirm__resend.is-waiting {
+	color: var(--ty-auth-sub);
+	text-decoration: none;
+	pointer-events: none;
+	cursor: default;
+}
+
+.typee-auth-confirm__hotline strong {
+	font-weight: 700;
+}
+
+/* Footer inset strip trong Card 480px (Figma 82:6033) */
+.typee-auth-recovery-foot {
+	padding: 14px 12px;
+	border-radius: var(--ty-r-btn);
+	background: rgba(245, 242, 251, 0.65);
+	border: 1px solid var(--ty-auth-line);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+}
+
+.typee-auth-recovery-foot__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 600;
+	color: var(--ty-auth-warm);
+	transition: color 0.15s ease;
+}
+
+.typee-auth-recovery-foot__link:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-auth-recovery-foot__ssl {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 5px;
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-recovery-foot__ssl-icon {
+	color: var(--ty-accent-text);
+}
+
+/* Status strip dưới Card 480px (Figma 82:6044) */
+.typee-auth-recovery-status {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 0 8px;
+	font-size: 11px;
+	line-height: 18px;
+	color: var(--ty-auth-warm);
+}
+
+.typee-auth-recovery-status__left {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.typee-auth-recovery-status__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: var(--ty-r-lg);
+	background: #059669;
+}
+
+/* ==========================================================================
+   5. RESPONSIVE (TABLET & MOBILE)
+   ========================================================================== */
+@media (max-width: 1023px) {
+	.typee-account-mobile-bar {
+		display: block;
+	}
+
+	.typee-account-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.typee-account-sidebar {
+		width: 100%;
+		position: static;
+		display: none;
+	}
+
+	.typee-account-sidebar.is-open {
+		display: block;
+	}
+
+	.typee-account-content {
+		padding: 20px;
+	}
+
+	/* Auth Split-screen chuyển thành 1 cột, ưu tiên form đăng nhập lên trước */
+	.typee-auth-split {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-auth-panel {
+		grid-column: auto;
+		order: -1;
+	}
+
+	.typee-auth-showcase {
+		grid-column: auto;
+	}
+}
+
+@media (max-width: 767px) {
+	.typee-account-shell {
+		padding: 20px 0 48px;
+	}
+
+	.typee-account-content {
+		padding: 16px;
+		border-radius: var(--ty-r-btn);
+	}
+
+	.typee-auth-split-wrap {
+		padding-top: 20px;
+	}
+
+	.typee-auth-greeting {
+		padding: 20px;
+	}
+
+	body.typee .typee-auth-greeting__title,
+	body.typee .typee-auth-manifesto__title,
+	body.typee .typee-auth-recovery-intro__title {
+		font-size: 24px;
+		line-height: 32px;
+	}
+
+	.typee-auth-card {
+		padding: 24px 20px;
+	}
+
+	.typee-auth-row-2,
+	.typee-auth-socials {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-auth-tabs {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-auth-manifesto__inner {
+		padding: 24px 20px;
+	}
+
+	.typee-auth-recovery-page {
+		padding: 24px var(--ty-gutter) 40px;
+	}
+
+	.typee-auth-recovery-card {
+		padding: 24px 20px;
+	}
+}
+
+/* ==========================================================================
+   6. THÀNH PHẦN DÙNG CHUNG BÊN TRONG CÁC TAB TÀI KHOẢN (CARDS, BUTTONS, PILLS)
+   ========================================================================== */
+.typee-account-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 24px;
+	box-shadow: var(--ty-shadow-sm);
+	box-sizing: border-box;
+}
+
+body.typee .typee-account-page-title {
+	font-family: var(--ty-font-display);
+	font-size: 28px;
+	line-height: 36px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--ty-ink);
+}
+
+.typee-account-page-desc {
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-count-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: var(--ty-r-lg);
+	background: #eae7ef;
+	color: var(--ty-ink);
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.typee-account-section-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-section-head__left {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.typee-account-section-bar {
+	width: 5px;
+	height: 20px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent);
+	flex-shrink: 0;
+}
+
+body.typee .typee-account-section-title {
+	font-family: var(--ty-font-display);
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--ty-ink);
+}
+
+body.typee .typee-account-section-title--sm {
+	font-size: 17px;
+	line-height: 24px;
+}
+
+.typee-account-section-meta {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-more-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-more-link:hover {
+	text-decoration: underline;
+}
+
+.typee-account-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 600;
+	color: var(--ty-acc-warm);
+	transition: color 0.15s ease;
+}
+
+.typee-account-back-link:hover {
+	color: var(--ty-accent-text);
+}
+
+/* Nút hành động nội bộ .typee-account-btn */
+body.typee .typee-account-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 38px;
+	margin: 0;
+	padding: 8px 14px;
+	border: 1px solid transparent;
+	border-radius: var(--ty-r-badge);
+	font-family: var(--ty-font-body);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: none;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.typee .typee-account-btn--lg {
+	min-height: var(--ty-tap);
+	padding: 10px 24px;
+	font-size: 14px;
+	font-weight: 700;
+	border-radius: var(--ty-r-btn);
+}
+
+body.typee .typee-account-btn--soft {
+	background: var(--ty-acc-chip);
+	color: var(--ty-ink);
+}
+
+body.typee .typee-account-btn--soft:hover {
+	background: var(--ty-acc-line);
+	color: var(--ty-ink);
+}
+
+body.typee .typee-account-btn--warm {
+	background: rgba(255, 87, 34, 0.13);
+	color: var(--ty-accent-text);
+}
+
+body.typee .typee-account-btn--warm:hover {
+	background: rgba(255, 87, 34, 0.22);
+	color: var(--ty-accent-text);
+}
+
+body.typee .typee-account-btn--accent {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	box-shadow: 0 4px 12px rgba(255, 87, 34, 0.24);
+}
+
+body.typee .typee-account-btn--accent:hover {
+	background: var(--ty-accent-hover);
+	color: var(--ty-white);
+}
+
+body.typee .typee-account-btn--dark {
+	background: #141418;
+	color: var(--ty-white);
+}
+
+body.typee .typee-account-btn--dark:hover {
+	background: #272730;
+	color: var(--ty-white);
+}
+
+body.typee .typee-account-btn--danger {
+	background: #fef2f2;
+	color: var(--ty-danger-text);
+	border-color: #fecaca;
+}
+
+body.typee .typee-account-btn--danger:hover {
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+/* Status Pills & Badges */
+.typee-account-status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: var(--ty-r-lg);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.typee-account-status-pill--info { background: #eff6ff; color: #1d4ed8; }
+.typee-account-status-pill--accent { background: #fff0eb; color: var(--ty-accent-text); }
+.typee-account-status-pill--warning { background: #fffbeb; color: #b45309; }
+.typee-account-status-pill--success { background: #ecfdf5; color: #047857; }
+.typee-account-status-pill--danger { background: #fef2f2; color: #ba1a1a; }
+.typee-account-status-pill--neutral { background: var(--ty-acc-chip); color: var(--ty-ink); }
+
+.typee-account-status-pill__pulse {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: currentColor;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.typee-account-status-pill--accent .typee-account-status-pill__pulse {
+	box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.22);
+}
+
+.typee-account-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 7px;
+	border-radius: 4px;
+	font-size: 10px;
+	line-height: 16px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+}
+
+.typee-account-badge--success { background: #d1fae5; color: #065f46; }
+.typee-account-badge--warm { background: #ffdbd1; color: #862200; }
+.typee-account-badge--neutral { background: var(--ty-acc-chip); color: var(--ty-acc-warm); }
+
+/* Trạng thái trống */
+.typee-account-empty {
+	padding: 48px 24px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-account-empty__icon {
+	width: 56px;
+	height: 56px;
+	border-radius: var(--ty-r-card);
+	background: var(--ty-accent-light);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.typee .typee-account-empty__title {
+	font-size: 20px;
+	line-height: 28px;
+	color: var(--ty-ink);
+}
+
+.typee-account-empty__desc {
+	max-width: 460px;
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-empty__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+/* ==========================================================================
+   7. ĐƠN HÀNG CỦA TÔI & CHI TIẾT ĐƠN HÀNG (FIGMA 82:7120 & 46:5741)
+   ========================================================================== */
+.typee-account-orders-head {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-account-orders-head__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-account-orders-head__title-row {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-account-rma-sync-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-acc-chip);
+	color: var(--ty-acc-warm);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+}
+
+.typee-account-rma-sync-pill__icon {
+	color: var(--ty-accent);
+}
+
+.typee-account-rma-sync-pill strong {
+	color: var(--ty-ink);
+	font-weight: 800;
+}
+
+.typee-account-rma-sync-pill--link:hover {
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+}
+
+/* Segmented Filter Tabs (Figma 82:7261) */
+.typee-account-orders-tabs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	overflow-x: auto;
+	padding-bottom: 2px;
+	scrollbar-width: thin;
+}
+
+.typee-account-orders-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 38px;
+	padding: 8px 14px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	color: var(--ty-acc-warm);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	white-space: nowrap;
+	box-shadow: var(--ty-shadow-xs);
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.typee-account-orders-tab:hover {
+	border-color: var(--ty-accent);
+	color: var(--ty-ink);
+}
+
+.typee-account-orders-tab.is-active {
+	background: var(--ty-accent);
+	border-color: var(--ty-accent);
+	color: var(--ty-white);
+	font-weight: 700;
+}
+
+.typee-account-orders-tab__count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	padding: 0 6px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-acc-chip);
+	color: var(--ty-ink);
+	font-size: 11px;
+	line-height: 18px;
+	font-weight: 700;
+}
+
+.typee-account-orders-tab__count.is-accent {
+	background: rgba(255, 87, 34, 0.18);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-orders-tab.is-active .typee-account-orders-tab__count {
+	background: rgba(255, 255, 255, 0.24);
+	color: var(--ty-white);
+}
+
+/* Search & Date Filter Bar (Figma 82:7292) */
+.typee-account-orders-filter {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(200px, 1fr);
+	gap: 14px;
+	margin: 0;
+}
+
+.typee-account-orders-search,
+.typee-account-orders-range {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.typee-account-orders-search__icon,
+.typee-account-orders-range__icon {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-acc-warm);
+	pointer-events: none;
+	display: inline-flex;
+}
+
+body.typee .typee-account-orders-search__input {
+	width: 100%;
+	min-height: var(--ty-tap);
+	height: var(--ty-tap);
+	margin: 0;
+	padding: 10px 38px 10px 42px;
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-btn);
+	font-family: var(--ty-font-body);
+	font-size: 13px;
+	color: var(--ty-ink);
+	box-shadow: var(--ty-shadow-xs);
+}
+
+body.typee .typee-account-orders-search__input:focus,
+body.typee .typee-account-orders-range__select:focus {
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-focus);
+	outline: none;
+}
+
+.typee-account-orders-search__clear {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-orders-search__clear:hover {
+	background: var(--ty-acc-chip);
+	color: var(--ty-ink);
+}
+
+body.typee .typee-account-orders-range__select {
+	width: 100%;
+	min-height: var(--ty-tap);
+	height: var(--ty-tap);
+	margin: 0;
+	padding: 0 34px 0 40px;
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-btn);
+	font-family: var(--ty-font-body);
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ty-ink);
+	box-shadow: var(--ty-shadow-xs);
+	appearance: none;
+	cursor: pointer;
+}
+
+.typee-account-orders-range__caret {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-acc-warm);
+	pointer-events: none;
+	display: inline-flex;
+}
+
+/* Danh sách thẻ đơn hàng */
+.typee-account-orders-list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-account-order-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	overflow: hidden;
+	box-shadow: var(--ty-shadow-sm);
+}
+
+.typee-account-order-card__head {
+	background: var(--ty-acc-soft);
+	border-bottom: 1px solid var(--ty-acc-line);
+	padding: 13px 18px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px 14px;
+}
+
+.typee-account-order-card__meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px 12px;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-card__id-wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.typee-account-order-card__id-label {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-card__id {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-order-card__id:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-order-card__sep {
+	color: #cbc6d4;
+}
+
+.typee-account-order-card__carrier {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.typee-account-order-card__carrier strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-order-card__body {
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+/* 5-Step Progress Stepper (Figma 46:6059) */
+.typee-account-order-stepper {
+	background: rgba(245, 242, 251, 0.78);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-btn);
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-order-stepper__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.typee-account-order-stepper__eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-accent-text);
+	text-transform: uppercase;
+}
+
+.typee-account-order-stepper__note {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-stepper__note strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-order-stepper__bars {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 8px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.typee-account-order-stepper__step {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.typee-account-order-stepper__bar {
+	display: block;
+	height: 6px;
+	border-radius: var(--ty-r-lg);
+	background: #e4e1ea;
+}
+
+.typee-account-order-stepper__step.is-done .typee-account-order-stepper__bar {
+	background: var(--ty-success);
+}
+
+.typee-account-order-stepper__step.is-current .typee-account-order-stepper__bar {
+	background: var(--ty-accent);
+}
+
+.typee-account-order-stepper__label {
+	font-size: 11px;
+	line-height: 15px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-stepper__step.is-done .typee-account-order-stepper__label {
+	color: var(--ty-ink);
+	font-weight: 500;
+}
+
+.typee-account-order-stepper__step.is-current .typee-account-order-stepper__label {
+	color: var(--ty-accent-text);
+	font-weight: 700;
+}
+
+/* Highlight Ribbon ưu đãi đơn hàng */
+.typee-account-order-ribbon {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: var(--ty-r-xs);
+	background: rgba(255, 87, 34, 0.1);
+	color: var(--ty-accent-text);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+}
+
+/* Danh sách dòng sản phẩm */
+.typee-account-order-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-order-item {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.typee-account-order-item + .typee-account-order-item {
+	padding-top: 12px;
+	border-top: 1px solid #f0edf6;
+}
+
+.typee-account-order-item__left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+	flex: 1;
+}
+
+.typee-account-order-item__thumb {
+	width: 64px;
+	height: 64px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-chip);
+	border: 1px solid var(--ty-acc-line);
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-order-item__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.typee-account-order-item__fallback {
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-item__info {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+body.typee .typee-account-order-item__name {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-order-item__name a:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-order-item__meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-item__chip {
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: var(--ty-acc-chip);
+	color: var(--ty-acc-warm);
+	font-size: 11px;
+	line-height: 16px;
+}
+
+.typee-account-order-item__chip--sku {
+	background: rgba(255, 87, 34, 0.1);
+	color: var(--ty-accent-text);
+	font-weight: 600;
+}
+
+.typee-account-order-item__qty strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-order-item__price {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	white-space: nowrap;
+}
+
+.typee-account-order-more {
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 600;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-order-more a:hover {
+	text-decoration: underline;
+}
+
+.typee-account-order-rma-strip {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 8px;
+	padding: 8px 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-chip);
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-rma-strip__icon {
+	color: #059669;
+}
+
+.typee-account-order-rma-strip strong {
+	color: var(--ty-ink);
+}
+
+/* Footer thẻ đơn hàng */
+.typee-account-order-card__foot {
+	background: var(--ty-acc-soft);
+	border-top: 1px solid var(--ty-acc-line);
+	padding: 14px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-order-card__status-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 10px 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-card__status-note .ty-icon {
+	color: var(--ty-accent);
+	margin-top: 1px;
+}
+
+.typee-account-order-card__bottom {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 14px;
+}
+
+.typee-account-order-card__summary {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.typee-account-order-card__pay-method {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-card__total-row {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.typee-account-order-card__total-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ty-ink);
+}
+
+.typee-account-order-card__total-val {
+	font-size: 19px;
+	line-height: 24px;
+	font-weight: 800;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-order-card__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+/* Phân trang đơn hàng (Figma 82:7594) */
+.typee-account-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding-top: 4px;
+}
+
+.typee-account-pagination__info {
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-pagination__info strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-pagination__controls {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.typee-account-page-btn,
+.typee-account-page-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	min-height: 36px;
+	padding: 0 12px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	color: var(--ty-ink);
+	font-size: 12px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.typee-account-page-num {
+	min-width: 36px;
+	padding: 0 8px;
+}
+
+.typee-account-page-btn:hover:not(.is-disabled),
+.typee-account-page-num:hover:not(.is-active) {
+	border-color: var(--ty-accent);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-page-num.is-active {
+	background: var(--ty-accent);
+	border-color: var(--ty-accent);
+	color: var(--ty-white);
+	font-weight: 700;
+}
+
+.typee-account-page-btn.is-disabled {
+	background: var(--ty-acc-soft);
+	color: var(--ty-acc-warm);
+	opacity: 0.6;
+}
+
+/* Guarantee Card (Figma 82:7612) */
+.typee-account-guarantee {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 18px 20px;
+}
+
+.typee-account-guarantee__icon {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-btn);
+	background: rgba(255, 87, 34, 0.14);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-guarantee__body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+body.typee .typee-account-guarantee__title {
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-guarantee__desc {
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--ty-acc-warm);
+}
+
+/* ---------- Chi tiết đơn hàng (`view-order.php`) ---------- */
+.typee-account-order-detail-head {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-order-detail-head__nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-account-order-detail-head__main {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.typee-account-order-detail-head__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.typee-account-order-detail-items {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.typee-account-order-totals {
+	margin-top: 4px;
+	padding-top: 16px;
+	border-top: 1px dashed var(--ty-acc-line);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-account-order-totals__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-totals__val {
+	font-weight: 600;
+	color: var(--ty-ink);
+	text-align: right;
+}
+
+.typee-account-order-totals__row.is-grand {
+	padding-top: 10px;
+	border-top: 1px solid var(--ty-acc-line);
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-order-totals__row.is-grand .typee-account-order-totals__val {
+	font-size: 20px;
+	font-weight: 800;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-order-totals__note {
+	margin-top: 4px;
+	padding: 12px 14px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-soft);
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-detail-grid-2 {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.typee-account-address-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-address-card__icon {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-address-card__body {
+	font-style: normal;
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+.typee-account-address-card__meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-order-notes {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-notes-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.typee-account-notes-item {
+	margin: 0;
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.typee-account-notes-item__dot {
+	width: 10px;
+	height: 10px;
+	margin-top: 5px;
+	border-radius: 50%;
+	background: var(--ty-accent);
+	flex-shrink: 0;
+}
+
+.typee-account-notes-item__time {
+	display: block;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+	margin-bottom: 2px;
+}
+
+.typee-account-notes-item__text {
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--ty-ink);
+}
+
+/* ==========================================================================
+   8. HỒ SƠ CÁ NHÂN & BẢO MẬT (FIGMA 82:6569 / 82:6710)
+   ========================================================================== */
+.typee-account-profile-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.typee-account-profile-head__main {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	max-width: 600px;
+}
+
+.typee-account-verified-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border-radius: var(--ty-r-lg);
+	background: #ecfdf5;
+	border: 1px solid #a7f3d0;
+	color: #065f46;
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.typee-account-verified-pill--pending {
+	background: #fffbeb;
+	border-color: #fde68a;
+	color: #92400e;
+}
+
+.typee-account-profile-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	margin: 0;
+}
+
+.typee-account-profile-section,
+.typee-account-security-section {
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+/* Avatar & Identity Strip (Figma 82:6731) */
+.typee-account-avatar-strip {
+	display: flex;
+	align-items: center;
+	gap: 22px;
+	padding: 18px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-avatar-strip__media {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	flex-shrink: 0;
+}
+
+.typee-account-avatar-strip__frame {
+	width: 96px;
+	height: 96px;
+	border-radius: var(--ty-r-btn);
+	overflow: hidden;
+	background: var(--ty-acc-chip);
+	box-shadow: var(--ty-shadow-sm);
+	border: 2px solid var(--ty-white);
+}
+
+.typee-account-avatar-strip__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+body.typee .typee-account-avatar-strip__cam {
+	position: absolute;
+	right: -6px;
+	bottom: -6px;
+	width: 34px;
+	height: 34px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 2px solid var(--ty-white);
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: var(--ty-shadow-sm);
+}
+
+body.typee .typee-account-avatar-strip__cam:hover {
+	background: var(--ty-accent-hover);
+}
+
+.typee-account-avatar-strip__info {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-account-avatar-strip__name-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.typee-account-avatar-strip__name {
+	font-family: var(--ty-font-display);
+	font-size: 18px;
+	line-height: 24px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-tier-pill {
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+}
+
+.typee-account-avatar-strip__bio {
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-avatar-strip__bio strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-avatar-strip__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px 14px;
+	padding-top: 2px;
+}
+
+body.typee .typee-account-avatar-strip__btn {
+	min-height: 34px;
+	margin: 0;
+	padding: 6px 14px;
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	color: var(--ty-accent-text);
+	font-family: var(--ty-font-body);
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: none;
+	letter-spacing: 0.02em;
+	cursor: pointer;
+	box-shadow: var(--ty-shadow-xs);
+}
+
+body.typee .typee-account-avatar-strip__btn:hover {
+	border-color: var(--ty-accent);
+	background: var(--ty-acc-active-bg);
+}
+
+.typee-account-avatar-strip__hint {
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+/* Profile Input Form 2-Column Grid (Figma 82:6751) */
+.typee-account-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px 24px;
+}
+
+.typee-account-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.typee-account-field__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.typee-account-field__label {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+.typee-account-field__tag {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-field__promo {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-accent);
+}
+
+.typee-account-field__help {
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-input-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+body.typee .typee-account-input,
+body.typee .typee-account-select {
+	width: 100%;
+	min-height: var(--ty-tap);
+	height: var(--ty-tap);
+	margin: 0;
+	padding: 10px 14px;
+	box-sizing: border-box;
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-badge);
+	font-family: var(--ty-font-body);
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--ty-ink);
+	box-shadow: none;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.typee .typee-account-input--muted {
+	background: var(--ty-acc-chip);
+}
+
+body.typee .typee-account-input--has-right {
+	padding-right: 44px;
+}
+
+body.typee .typee-account-input--has-btn {
+	padding-right: 84px;
+}
+
+body.typee .typee-account-input:focus,
+body.typee .typee-account-select:focus {
+	background: var(--ty-white);
+	border-color: var(--ty-accent);
+	box-shadow: var(--ty-focus);
+	outline: none;
+}
+
+.typee-account-input-right-icon {
+	position: absolute;
+	right: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-acc-warm);
+	pointer-events: none;
+	display: inline-flex;
+}
+
+body.typee .typee-account-input-action {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	min-height: 28px;
+	margin: 0;
+	padding: 4px 10px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--ty-accent-text);
+	font-family: var(--ty-font-body);
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: none;
+	cursor: pointer;
+}
+
+body.typee .typee-account-input-action:hover {
+	background: var(--ty-acc-active-bg);
+}
+
+/* Ngày sinh 3 select */
+.typee-account-dob-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.typee-account-dob-grid .typee-account-select {
+	padding: 0 10px;
+	font-size: 13px;
+}
+
+/* Giới tính Segmented Pills (Figma 82:6811) */
+.typee-account-gender-pills {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.typee-account-gender-pill {
+	position: relative;
+	margin: 0;
+	cursor: pointer;
+}
+
+.typee-account-gender-pill input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.typee-account-gender-pill span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--ty-tap);
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+	color: var(--ty-ink);
+	font-size: 13px;
+	font-weight: 600;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.typee-account-gender-pill input:checked + span {
+	background: #1b1b21;
+	border-color: #1b1b21;
+	color: var(--ty-canvas);
+	font-weight: 700;
+	box-shadow: var(--ty-shadow-xs);
+}
+
+.typee-account-gender-pill input:focus-visible + span {
+	box-shadow: var(--ty-focus);
+}
+
+/* Action Bar Section 1 (Figma 82:6834) */
+.typee-account-profile-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 14px;
+	padding-top: 16px;
+	border-top: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-profile-actions__note {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-profile-actions__icon {
+	color: #059669;
+}
+
+.typee-account-profile-actions__btns {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+/* Section 2: Đổi mật khẩu & 4-bar Strength Gauge (Figma 82:6848) */
+.typee-account-pw-stack {
+	max-width: 640px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-forgot-link {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-forgot-link:hover {
+	text-decoration: underline;
+}
+
+.typee-account-pw-gauge {
+	padding-top: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.typee-account-pw-gauge__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-pw-gauge__status {
+	font-weight: 700;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-pw-gauge__status.is-weak { color: var(--ty-danger-text); }
+.typee-account-pw-gauge__status.is-medium { color: #b45309; }
+.typee-account-pw-gauge__status.is-strong { color: #047857; }
+
+.typee-account-pw-gauge__bars {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 6px;
+}
+
+.typee-account-pw-gauge__seg {
+	height: 6px;
+	border-radius: var(--ty-r-lg);
+	background: var(--ty-acc-line);
+	transition: background-color 0.2s ease;
+}
+
+.typee-account-pw-gauge__seg.is-weak { background: var(--ty-danger); }
+.typee-account-pw-gauge__seg.is-medium { background: var(--ty-warning); }
+.typee-account-pw-gauge__seg.is-strong { background: var(--ty-success); }
+
+.typee-account-pw-criteria {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 18px;
+}
+
+.typee-account-pw-criteria__item {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 11px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+	opacity: 0.72;
+	transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.typee-account-pw-criteria__item.is-met {
+	color: #047857;
+	font-weight: 600;
+	opacity: 1;
+}
+
+.typee-account-pw-submit-wrap {
+	padding-top: 6px;
+}
+
+/* 2FA Security Banner (Figma 82:6925) */
+.typee-account-2fa-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding: 16px 18px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-2fa-banner__left {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	min-width: 0;
+	flex: 1;
+}
+
+.typee-account-2fa-banner__icon {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-badge);
+	background: #ffdbd1;
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-2fa-banner__info {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.typee-account-2fa-banner__title-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--ty-ink);
+}
+
+.typee-account-2fa-banner__desc {
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-2fa-toggle {
+	margin: 0;
+	cursor: pointer;
+}
+
+.typee-account-2fa-toggle input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.typee-account-2fa-toggle__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	padding: 6px 14px;
+	border-radius: var(--ty-r-badge);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	color: var(--ty-ink);
+	font-size: 12px;
+	font-weight: 700;
+	box-shadow: var(--ty-shadow-xs);
+	transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-account-2fa-toggle:hover .typee-account-2fa-toggle__btn {
+	border-color: var(--ty-accent);
+	color: var(--ty-accent-text);
+}
+
+/* ==========================================================================
+   9. TỔNG QUAN TÀI KHOẢN / DASHBOARD (FIGMA 46:5741 HERO & METRICS)
+   ========================================================================== */
+.typee-account-dash-hero {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-account-dash-hero__top {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 310px;
+	gap: 20px;
+	align-items: center;
+}
+
+.typee-account-dash-hero__user {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	min-width: 0;
+}
+
+.typee-account-dash-hero__avatar {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	flex-shrink: 0;
+}
+
+.typee-account-dash-hero__img {
+	width: 80px;
+	height: 80px;
+	border-radius: var(--ty-r-btn);
+	object-fit: cover;
+	display: block;
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-dash-hero__vip {
+	position: absolute;
+	right: -4px;
+	bottom: -6px;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	font-size: 9px;
+	line-height: 14px;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+}
+
+.typee-account-dash-hero__identity {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.typee-account-dash-hero__name-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+body.typee .typee-account-dash-hero__name {
+	font-family: var(--ty-font-display);
+	font-size: 22px;
+	line-height: 28px;
+	font-weight: 800;
+	color: var(--ty-ink);
+}
+
+.typee-account-dash-hero__rank {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 10px;
+	border-radius: 4px;
+	background: rgba(245, 158, 11, 0.14);
+	color: #b45309;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 700;
+}
+
+.typee-account-dash-hero__contacts {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px 14px;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-dash-hero__contacts > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.typee-account-dash-hero__id {
+	color: var(--ty-accent-text);
+	font-weight: 700;
+}
+
+.typee-account-dash-hero__btns {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.typee-account-dash-loyalty {
+	padding: 16px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-account-dash-loyalty__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.typee-account-dash-loyalty__eyebrow {
+	display: block;
+	font-size: 10px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-dash-loyalty__amount {
+	display: block;
+	margin-top: 2px;
+	font-size: 18px;
+	line-height: 24px;
+	font-weight: 800;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-dash-loyalty__pct {
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-dash-loyalty__desc {
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-dash-loyalty__desc strong {
+	color: var(--ty-ink);
+}
+
+/* 4 Operational Metrics (Figma 46:5840) */
+.typee-account-metrics {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	padding-top: 16px;
+	border-top: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-metric {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	border-radius: var(--ty-r-btn);
+	background: rgba(245, 242, 251, 0.72);
+	border: 1px solid transparent;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.typee-account-metric:hover {
+	border-color: var(--ty-acc-line);
+	background: var(--ty-acc-soft);
+}
+
+.typee-account-metric__icon {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-badge);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-metric__icon--success { background: rgba(16, 185, 129, 0.12); color: #047857; }
+.typee-account-metric__icon--accent { background: rgba(255, 87, 34, 0.12); color: var(--ty-accent); }
+.typee-account-metric__icon--info { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
+.typee-account-metric__icon--warning { background: rgba(245, 158, 11, 0.14); color: #b45309; }
+
+.typee-account-metric__num {
+	display: block;
+	font-size: 18px;
+	line-height: 22px;
+	font-weight: 800;
+	color: var(--ty-ink);
+}
+
+.typee-account-metric__num--accent {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-metric__label {
+	display: block;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-acc-warm);
+}
+
+/* Đơn hàng gần đây trên Dashboard */
+.typee-account-dash-recent {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.typee-account-recent-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-account-recent-item {
+	margin: 0;
+	padding: 12px 14px;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-soft);
+	border: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.typee-account-recent-item__main {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.typee-account-recent-item__id {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-recent-item__id:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-recent-item__meta {
+	font-size: 12px;
+	color: var(--ty-acc-warm);
+}
+
+.typee-account-recent-item__right {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-account-recent-item__total {
+	font-size: 14px;
+	font-weight: 800;
+	color: var(--ty-ink);
+}
+
+.typee-account-dash-empty {
+	padding: 20px 0 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	font-size: 14px;
+	color: var(--ty-acc-warm);
+}
+
+/* Lối tắt quản lý tài khoản */
+.typee-account-shortcuts {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.typee-account-shortcut {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 18px;
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	box-shadow: var(--ty-shadow-sm);
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.typee-account-shortcut:hover {
+	border-color: var(--ty-accent);
+	transform: translateY(-1px);
+}
+
+.typee-account-shortcut__icon {
+	width: 42px;
+	height: 42px;
+	flex-shrink: 0;
+	border-radius: var(--ty-r-btn);
+	background: var(--ty-acc-soft);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.typee-account-shortcut strong {
+	display: block;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	margin-bottom: 2px;
+}
+
+.typee-account-shortcut span {
+	display: block;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-acc-warm);
+}
+
+/* ==========================================================================
+   10. RESPONSIVE BỔ SUNG CHO ORDERS, VIEW ORDER, PROFILE, DASHBOARD
+   ========================================================================== */
+@media (max-width: 1180px) {
+	.typee-account-dash-hero__top {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-account-metrics {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767px) {
+	.typee-account-card {
+		padding: 18px;
+		border-radius: var(--ty-r-btn);
+	}
+
+	body.typee .typee-account-page-title {
+		font-size: 22px;
+		line-height: 30px;
+	}
+
+	.typee-account-orders-filter,
+	.typee-account-form-grid,
+	.typee-account-detail-grid-2,
+	.typee-account-shortcuts {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-account-order-stepper__bars {
+		grid-template-columns: 1fr;
+		gap: 6px;
+	}
+
+	.typee-account-order-stepper__step {
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.typee-account-order-stepper__bar {
+		width: 28px;
+		flex-shrink: 0;
+	}
+
+	.typee-account-order-item {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.typee-account-order-item__price {
+		align-self: flex-end;
+	}
+
+	.typee-account-avatar-strip {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.typee-account-guarantee {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.typee-account-metrics {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ============================================================================
+ * CÁC THÀNH PHẦN DÙNG CHUNG & 3 MỤC MỚI: SỔ ĐỊA CHỈ, CẤU HÌNH BUILDER, WISHLIST
+ * ============================================================================ */
+
+.typee-account-title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+.typee-account-count-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 700;
+}
+
+.typee-account-inline-form {
+	display: inline-flex;
+	margin: 0;
+}
+
+.typee-account-textarea {
+	width: 100%;
+	min-height: 84px;
+	padding: 11px 14px;
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-ctrl);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 21px;
+	resize: vertical;
+	box-sizing: border-box;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.typee-account-textarea:focus {
+	outline: none;
+	border-color: var(--ty-accent);
+	box-shadow: 0 0 0 3px rgba(204, 73, 0, 0.12);
+}
+
+.typee-account-select--compact {
+	height: 38px;
+	padding: 0 32px 0 12px;
+	font-size: 13px;
+}
+
+.typee-account-checkbox-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 16px;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 500;
+	color: var(--ty-ink);
+	cursor: pointer;
+}
+
+.typee-account-checkbox-row input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--ty-accent);
+	margin: 0;
+	cursor: pointer;
+}
+
+.typee-account-inline-toast {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: var(--ty-r-ctrl);
+	border: 1px solid #BBF7D0;
+	background: #F0FDF4;
+	color: #166534;
+	font-size: 13px;
+	line-height: 20px;
+	font-weight: 600;
+}
+
+.typee-account-inline-toast.is-error {
+	border-color: #FECACA;
+	background: #FEF2F2;
+	color: #991B1B;
+}
+
+.typee-account-inline-toast.is-info {
+	border-color: #FED7AA;
+	background: #FFF7ED;
+	color: #9A3412;
+}
+
+.typee-account-loading-card {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 40px 24px;
+	color: var(--ty-muted);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.typee-account-loading-card__dot {
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--ty-acc-line);
+	border-top-color: var(--ty-accent);
+	border-radius: 50%;
+	animation: typeeAccountSpin 0.75s linear infinite;
+	flex-shrink: 0;
+}
+
+@keyframes typeeAccountSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.typee-account-empty-state {
+	padding: 48px 28px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.typee-account-empty-state__icon {
+	width: 64px;
+	height: 64px;
+	border-radius: 16px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.typee .typee-account-empty-state__title {
+	margin: 4px 0 0;
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-empty-state__desc {
+	max-width: 520px;
+	margin: 0;
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--ty-muted);
+}
+
+.typee-account-empty-state__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 8px;
+}
+
+/* ---------- SỔ ĐỊA CHỈ GIAO HÀNG (Figma 82:6066 / 82:6205) ---------- */
+.typee-account-addr-header__actions {
+	flex-shrink: 0;
+}
+
+.typee-account-addr-callout {
+	margin-top: 16px;
+	padding: 12px 14px;
+	border-radius: var(--ty-r-ctrl);
+	background: #F6F3FA;
+	border: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.typee-account-addr-callout__icon {
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	margin-top: 1px;
+	flex-shrink: 0;
+}
+
+.typee-account-addr-callout__text {
+	margin: 0;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--ty-muted);
+}
+
+.typee-account-addr-callout__text strong {
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px;
+	align-items: stretch;
+}
+
+.typee-account-addr-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 20px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	position: relative;
+	overflow: hidden;
+}
+
+.typee-account-addr-card--default {
+	border-color: rgba(204, 73, 0, 0.35);
+	box-shadow: 0 8px 24px rgba(204, 73, 0, 0.08);
+}
+
+.typee-account-addr-card--default::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 5px;
+	background: var(--ty-accent);
+}
+
+.typee-account-addr-card__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.typee-account-addr-card__tags {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.typee-account-addr-card__type {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: #F4F1FA;
+	color: var(--ty-ink);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+}
+
+.typee-account-addr-card__kind {
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--ty-muted);
+	padding: 3px 8px;
+	border-radius: 4px;
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-addr-card__who {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+body.typee .typee-account-addr-card__name {
+	margin: 0;
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-card__phone-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.typee-account-addr-card__phone {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 600;
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-card__verified {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 600;
+	color: #15803D;
+	background: #F0FDF4;
+	padding: 2px 7px;
+	border-radius: 999px;
+}
+
+.typee-account-addr-card__box {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px;
+	border-radius: var(--ty-r-ctrl);
+	background: #FBF9FE;
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-addr-card__pin {
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+
+.typee-account-addr-card__addr-text {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.typee-account-addr-card__company {
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-card__addr-text p {
+	margin: 0;
+	font-size: 13.5px;
+	line-height: 20px;
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-card__zip {
+	font-size: 11.5px;
+	color: var(--ty-muted);
+}
+
+.typee-account-addr-card__note {
+	padding: 10px 12px;
+	border-radius: var(--ty-r-ctrl);
+	background: #F7F5FB;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-top: auto;
+}
+
+.typee-account-addr-card__note-label {
+	font-size: 10.5px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-muted);
+}
+
+.typee-account-addr-card__note-text {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 18px;
+	color: var(--ty-muted);
+}
+
+.typee-account-addr-card__footer {
+	padding-top: 12px;
+	border-top: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.typee-account-addr-card__btns {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.typee-account-addr-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 6px 11px;
+	border-radius: var(--ty-r-ctrl);
+	border: 1px solid var(--ty-acc-line);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-size: 12.5px;
+	line-height: 18px;
+	font-weight: 600;
+	text-decoration: none;
+	cursor: pointer;
+	transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.typee-account-addr-btn:hover {
+	border-color: var(--ty-accent);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-addr-btn--danger:hover {
+	border-color: #DC2626;
+	background: #FEF2F2;
+	color: #B91C1C;
+}
+
+.typee-account-addr-default-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 6px 11px;
+	border-radius: var(--ty-r-ctrl);
+	border: 1px solid rgba(204, 73, 0, 0.35);
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	font-size: 12.5px;
+	line-height: 18px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-account-addr-default-btn:hover {
+	background: var(--ty-accent);
+	color: var(--ty-white);
+}
+
+.typee-account-addr-active-note {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: 600;
+	color: #15803D;
+}
+
+.typee-account-addr-add {
+	border: 1.5px dashed #C7BFE0;
+	border-radius: var(--ty-r-card);
+	background: rgba(255, 255, 255, 0.72);
+	padding: 28px 22px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 10px;
+	min-height: 260px;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.typee-account-addr-add:hover {
+	border-color: var(--ty-accent);
+	background: var(--ty-white);
+}
+
+.typee-account-addr-add__icon {
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.typee .typee-account-addr-add__title {
+	margin: 2px 0 0;
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-addr-add__desc {
+	margin: 0;
+	max-width: 300px;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--ty-muted);
+}
+
+.typee-account-addr-add__actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+.typee-account-addr-add__links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	font-size: 12.5px;
+}
+
+.typee-account-addr-logistics {
+	background: linear-gradient(135deg, #FFFFFF 0%, #FFF9F5 100%);
+	border-color: rgba(204, 73, 0, 0.18);
+}
+
+.typee-account-addr-logistics__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+.typee-account-addr-logistics__icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-account-addr-logistics__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.typee-account-addr-logistics__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px;
+	border-radius: var(--ty-r-ctrl);
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-addr-logistics__item strong {
+	display: block;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-ink);
+	margin-bottom: 3px;
+}
+
+.typee-account-addr-logistics__item span {
+	display: block;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-muted);
+}
+
+/* Form chỉnh sửa địa chỉ chuẩn WooCommerce (`form-edit-address.php`) */
+.typee-account-edit-addr__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.typee-account-form-grid--extra {
+	margin-bottom: 16px;
+}
+
+.typee-account-wc-fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.typee-account-wc-fields .form-row {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+	float: none !important;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-account-wc-fields .form-row-wide {
+	grid-column: 1 / -1;
+}
+
+.typee-account-wc-fields .form-row label {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 600;
+	color: var(--ty-ink);
+	margin: 0;
+}
+
+.typee-account-wc-fields .form-row .input-text,
+.typee-account-wc-fields .form-row select,
+.typee-account-wc-fields .select2-container--default .select2-selection--single {
+	width: 100%;
+	height: 42px;
+	padding: 0 14px;
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-ctrl);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-size: 14px;
+	box-sizing: border-box;
+	box-shadow: none;
+}
+
+.typee-account-wc-fields .form-row .input-text:focus,
+.typee-account-wc-fields .form-row select:focus {
+	outline: none;
+	border-color: var(--ty-accent);
+	box-shadow: 0 0 0 3px rgba(204, 73, 0, 0.12);
+}
+
+/* ---------- CẤU HÌNH BUILDER ĐÃ LƯU (Figma 32:2950) ---------- */
+.typee-account-builds {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-account-builds-head__actions {
+	flex-shrink: 0;
+}
+
+.typee-account-builds-toolbar {
+	margin-top: 18px;
+	padding-top: 16px;
+	border-top: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.typee-account-filter-pills {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.typee-account-filter-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 13px;
+	border-radius: 999px;
+	border: 1px solid var(--ty-acc-line);
+	background: var(--ty-white);
+	color: var(--ty-muted);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.typee-account-filter-pill:hover {
+	border-color: var(--ty-accent);
+	color: var(--ty-ink);
+}
+
+.typee-account-filter-pill.is-active {
+	background: var(--ty-ink);
+	border-color: var(--ty-ink);
+	color: var(--ty-white);
+}
+
+.typee-account-filter-pill__count {
+	font-size: 11px;
+	padding: 1px 6px;
+	border-radius: 999px;
+	background: rgba(15, 23, 42, 0.08);
+	color: inherit;
+}
+
+.typee-account-filter-pill.is-active .typee-account-filter-pill__count {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.typee-account-search-box {
+	position: relative;
+	flex: 1 1 240px;
+	max-width: 320px;
+}
+
+.typee-account-search-box__icon {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--ty-muted);
+	display: inline-flex;
+	pointer-events: none;
+}
+
+.typee-account-search-box__input {
+	width: 100%;
+	height: 38px;
+	padding: 0 12px 0 36px;
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-ctrl);
+	background: var(--ty-white);
+	color: var(--ty-ink);
+	font-size: 13px;
+	box-sizing: border-box;
+}
+
+.typee-account-search-box__input:focus {
+	outline: none;
+	border-color: var(--ty-accent);
+	box-shadow: 0 0 0 3px rgba(204, 73, 0, 0.12);
+}
+
+.typee-account-builds-list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-account-build-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 22px;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.typee-account-build-card--draft {
+	border-style: dashed;
+	border-color: #D9C4B4;
+}
+
+.typee-account-build-card__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding-bottom: 14px;
+	border-bottom: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-build-card__badges {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.typee-account-build-card__date {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-muted);
+}
+
+.typee-account-build-card__body {
+	display: grid;
+	grid-template-columns: 230px minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+.typee-account-build-card__preview {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.typee-account-build-card__thumb {
+	position: relative;
+	aspect-ratio: 16 / 10;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #1B1926;
+	border: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-build-card__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.typee-account-build-card__placeholder {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.typee-account-build-card__tag {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: rgba(15, 23, 42, 0.78);
+	backdrop-filter: blur(4px);
+	color: var(--ty-white);
+	font-size: 10.5px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.typee-account-build-card__mount {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	padding: 2px 7px;
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--ty-ink);
+	font-size: 10.5px;
+	line-height: 14px;
+	font-weight: 700;
+}
+
+.typee-account-build-card__progress {
+	padding: 10px 12px;
+	border-radius: 6px;
+	background: #F7F5FB;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.typee-account-build-card__progress-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 11.5px;
+	font-weight: 600;
+	color: var(--ty-ink);
+}
+
+.typee-account-build-card__bar {
+	width: 100%;
+	height: 6px;
+	border-radius: 999px;
+	background: #E2DDF0;
+	overflow: hidden;
+}
+
+.typee-account-build-card__fill {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: #16A34A;
+}
+
+.typee-account-build-card--draft .typee-account-build-card__fill {
+	background: var(--ty-accent);
+}
+
+.typee-account-build-card__note {
+	margin: 0;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-muted);
+	padding: 8px 10px;
+	border-radius: 6px;
+	background: #FFFBF7;
+	border: 1px solid #F5E1D3;
+}
+
+.typee-account-build-card__bom {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.typee-account-build-card__code {
+	font-size: 11px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: var(--ty-muted);
+	text-transform: uppercase;
+}
+
+body.typee .typee-account-build-card__title {
+	margin: 2px 0 0;
+	font-size: 19px;
+	line-height: 26px;
+	font-weight: 700;
+	color: var(--ty-ink);
+}
+
+.typee-account-build-card__steps {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.typee-account-build-step {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 11px 12px;
+	border-radius: 8px;
+	background: #FBF9FE;
+	border: 1px solid var(--ty-acc-line);
+	min-width: 0;
+}
+
+.typee-account-build-step--pending {
+	background: #FFFBF7;
+	border-style: dashed;
+	border-color: #E7C8B3;
+}
+
+.typee-account-build-step__num {
+	width: 22px;
+	height: 22px;
+	border-radius: 6px;
+	background: var(--ty-ink);
+	color: var(--ty-white);
+	font-size: 11px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-account-build-step--pending .typee-account-build-step__num {
+	background: #ECE7F6;
+	color: var(--ty-muted);
+}
+
+.typee-account-build-step__info {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.typee-account-build-step__kicker {
+	font-size: 10px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: var(--ty-muted);
+	text-transform: uppercase;
+}
+
+.typee-account-build-step--pending .typee-account-build-step__kicker {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-build-step__name {
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 700;
+	color: var(--ty-ink);
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.typee-account-build-step__bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.typee-account-build-step__meta {
+	font-size: 11.5px;
+	line-height: 16px;
+	color: var(--ty-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.typee-account-build-step__price {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	color: var(--ty-accent-text);
+	flex-shrink: 0;
+}
+
+.typee-account-build-card__foot {
+	padding-top: 16px;
+	border-top: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.typee-account-build-card__summary {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.typee-account-build-card__stock {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: #15803D;
+}
+
+.typee-account-build-card__stock.is-warn {
+	color: #B45309;
+}
+
+.typee-account-build-card__save {
+	color: var(--ty-accent-text);
+	font-weight: 700;
+}
+
+.typee-account-build-card__totals {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.typee-account-build-card__total-label {
+	font-size: 12.5px;
+	color: var(--ty-muted);
+}
+
+.typee-account-build-card__total {
+	font-size: 22px;
+	line-height: 28px;
+	font-weight: 800;
+	color: var(--ty-ink);
+}
+
+.typee-account-build-card__strike {
+	font-size: 13px;
+	color: var(--ty-muted);
+	text-decoration: line-through;
+}
+
+.typee-account-build-card__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.typee-account-build-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 38px;
+	padding: 0 12px;
+	border-radius: var(--ty-r-ctrl);
+	border: 1px solid var(--ty-acc-line);
+	background: #F4F1FA;
+	color: var(--ty-ink);
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.typee-account-build-btn:hover {
+	border-color: var(--ty-accent);
+	background: var(--ty-white);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-build-btn--icon {
+	width: 38px;
+	padding: 0;
+}
+
+.typee-account-build-btn--danger:hover {
+	border-color: #DC2626;
+	background: #FEF2F2;
+	color: #B91C1C;
+}
+
+.typee-account-builds-perks__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.typee-account-builds-perks__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.typee-account-builds-perks__ico {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-account-builds-perks__item strong {
+	display: block;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--ty-ink);
+	margin-bottom: 3px;
+}
+
+.typee-account-builds-perks__item span {
+	display: block;
+	font-size: 12px;
+	line-height: 18px;
+	color: var(--ty-muted);
+}
+
+/* ---------- DANH SÁCH SẢN PHẨM YÊU THÍCH – WISHLIST (Figma 82:7799) ---------- */
+.typee-account-wishlist {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.typee-account-wl-toolbar {
+	margin-top: 18px;
+	padding-top: 16px;
+	border-top: 1px solid var(--ty-acc-line);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.typee-account-wl-sort {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.typee-account-wl-sort__label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ty-muted);
+	white-space: nowrap;
+}
+
+.typee-account-wl-bulk {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.typee-account-wl-clear-btn:not(:disabled):hover {
+	border-color: #DC2626;
+	background: #FEF2F2;
+	color: #B91C1C;
+}
+
+.typee-account-wl-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 18px;
+	align-items: stretch;
+}
+
+.typee-account-wl-grid__full {
+	grid-column: 1 / -1;
+}
+
+.typee-account-wl-card {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	overflow: hidden;
+	box-shadow: var(--ty-shadow-sm);
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.typee-account-wl-card:hover {
+	transform: translateY(-2px);
+	border-color: rgba(204, 73, 0, 0.35);
+	box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.typee-account-wl-card__media {
+	position: relative;
+	aspect-ratio: 4 / 3;
+	background: #F4F1FA;
+	overflow: hidden;
+}
+
+.typee-account-wl-card__img-link {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.typee-account-wl-card__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.25s ease;
+}
+
+.typee-account-wl-card:hover .typee-account-wl-card__img {
+	transform: scale(1.04);
+}
+
+.typee-account-wl-card__badges {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	right: 46px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	pointer-events: none;
+}
+
+.typee-account-wl-card__cat {
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: rgba(15, 23, 42, 0.8);
+	color: var(--ty-white);
+	font-size: 10.5px;
+	line-height: 14px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+}
+
+.typee-account-wl-card__sale {
+	padding: 3px 7px;
+	border-radius: 4px;
+	background: var(--ty-accent);
+	color: var(--ty-white);
+	font-size: 10.5px;
+	line-height: 14px;
+	font-weight: 700;
+}
+
+.typee-account-wl-card__remove {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	background: rgba(255, 255, 255, 0.94);
+	color: var(--ty-muted);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.typee-account-wl-card__remove:hover {
+	background: #DC2626;
+	border-color: #DC2626;
+	color: var(--ty-white);
+}
+
+.typee-account-wl-card__stock {
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+	padding: 3px 9px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	backdrop-filter: blur(4px);
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.typee-account-wl-card__stock-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+}
+
+.typee-account-wl-card__stock--in {
+	color: #15803D;
+}
+
+.typee-account-wl-card__stock--in .typee-account-wl-card__stock-dot {
+	background: #16A34A;
+}
+
+.typee-account-wl-card__stock--low {
+	color: #B45309;
+}
+
+.typee-account-wl-card__stock--low .typee-account-wl-card__stock-dot {
+	background: #F59E0B;
+}
+
+.typee-account-wl-card__stock--out {
+	color: #64748B;
+}
+
+.typee-account-wl-card__stock--out .typee-account-wl-card__stock-dot {
+	background: #94A3B8;
+}
+
+.typee-account-wl-card__body {
+	padding: 14px 16px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	flex: 1;
+}
+
+.typee-account-wl-card__rating {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--ty-muted);
+}
+
+.typee-account-wl-card__star {
+	color: #F59E0B;
+	font-size: 13px;
+}
+
+body.typee .typee-account-wl-card__name {
+	margin: 0;
+	font-size: 14.5px;
+	line-height: 20px;
+	font-weight: 700;
+}
+
+.typee-account-wl-card__name a {
+	color: var(--ty-ink);
+	text-decoration: none;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.typee-account-wl-card__name a:hover {
+	color: var(--ty-accent-text);
+}
+
+.typee-account-wl-card__specs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.typee-account-wl-card__chip {
+	padding: 2px 7px;
+	border-radius: 4px;
+	background: #F4F1FA;
+	color: var(--ty-muted);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: 600;
+}
+
+.typee-account-wl-card__price-box {
+	margin-top: auto;
+	padding-top: 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.typee-account-wl-card__price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.typee-account-wl-card__price {
+	font-size: 17px;
+	line-height: 22px;
+	font-weight: 800;
+	color: var(--ty-ink);
+}
+
+.typee-account-wl-card__regular {
+	font-size: 12px;
+	color: var(--ty-muted);
+	text-decoration: line-through;
+}
+
+.typee-account-wl-card__save {
+	font-size: 11.5px;
+	font-weight: 600;
+	color: var(--ty-accent-text);
+}
+
+.typee-account-wl-card__foot {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-top: 10px;
+	border-top: 1px solid var(--ty-acc-line);
+}
+
+.typee-account-wl-card__atc {
+	flex: 1;
+	height: 36px;
+	padding: 0 12px;
+	font-size: 12.5px;
+	justify-content: center;
+}
+
+.typee-account-wl-card__cmp {
+	width: 36px;
+	height: 36px;
+	border-radius: var(--ty-r-ctrl);
+	border: 1px solid var(--ty-acc-line);
+	background: var(--ty-white);
+	color: var(--ty-muted);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.typee-account-wl-card__cmp:hover,
+.typee-account-wl-card__cmp.is-active {
+	border-color: var(--ty-accent);
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+}
+
+.typee-account-wl-trust {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.typee-account-wl-trust__item {
+	background: var(--ty-white);
+	border: 1px solid var(--ty-acc-line);
+	border-radius: var(--ty-r-card);
+	padding: 14px;
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.typee-account-wl-trust__icon {
+	width: 34px;
+	height: 34px;
+	border-radius: 9px;
+	background: var(--ty-acc-active-bg);
+	color: var(--ty-accent-text);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.typee-account-wl-trust__item strong {
+	display: block;
+	font-size: 12.5px;
+	line-height: 17px;
+	color: var(--ty-ink);
+	margin-bottom: 2px;
+}
+
+.typee-account-wl-trust__item span {
+	display: block;
+	font-size: 11.5px;
+	line-height: 16px;
+	color: var(--ty-muted);
+}
+
+@media (max-width: 1180px) {
+	.typee-account-wl-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.typee-account-wl-trust {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.typee-account-build-card__body {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 767px) {
+	.typee-account-addr-grid,
+	.typee-account-addr-logistics__grid,
+	.typee-account-wc-fields,
+	.typee-account-build-card__steps,
+	.typee-account-builds-perks__grid,
+	.typee-account-wl-grid,
+	.typee-account-wl-trust {
+		grid-template-columns: 1fr;
+	}
+
+	.typee-account-search-box {
+		max-width: none;
+		width: 100%;
+	}
+
+	.typee-account-wl-bulk {
+		width: 100%;
+	}
+
+	.typee-account-wl-bulk .ty-btn {
+		flex: 1;
+		justify-content: center;
+	}
+}
+
+@media print {
+	body.typee.typee-account-page .typee-account-sidebar,
+	body.typee.typee-account-page .typee-account-breadcrumb,
+	body.typee.typee-account-page .typee-account-mobile-bar,
+	body.typee.typee-account-page .typee-account-order-detail-head__actions {
+		display: none !important;
+	}
+
+	body.typee.typee-account-page .typee-account-grid {
+		grid-template-columns: 1fr !important;
+	}
+}

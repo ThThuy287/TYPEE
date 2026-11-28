@@ -56,9 +56,10 @@ add_action( 'init', function () {
 	add_rewrite_rule( '^catalog/?$', 'index.php?post_type=product', 'top' );
 	add_rewrite_rule( '^catalog/page/([0-9]+)/?$', 'index.php?post_type=product&paged=$matches[1]', 'top' );
 
-	// Màn 07: "Cấu hình đã lưu" và danh sách phiếu RMA trong Tài khoản.
+	// Màn 07: "Cấu hình đã lưu", danh sách phiếu RMA và sản phẩm yêu thích trong Tài khoản.
 	add_rewrite_endpoint( 'saved-builds', EP_ROOT | EP_PAGES );
 	add_rewrite_endpoint( 'rma-tickets', EP_ROOT | EP_PAGES );
+	add_rewrite_endpoint( 'wishlist', EP_ROOT | EP_PAGES );
 }, 20 );
 
 /**
@@ -66,7 +67,7 @@ add_action( 'init', function () {
  */
 function typee_maybe_flush_routes() {
 	$rules = get_option( 'rewrite_rules' );
-	if ( ! is_array( $rules ) || ! isset( $rules['^builder/?$'] ) || ! isset( $rules['^modding-guides/([^/]+)/?$'] ) ) {
+	if ( ! is_array( $rules ) || ! isset( $rules['^builder/?$'] ) || ! isset( $rules['^modding-guides/([^/]+)/?$'] ) || ! isset( $rules['wishlist(/(.*))?/?$'] ) ) {
 		flush_rewrite_rules( false );
 	}
 }
@@ -161,6 +162,7 @@ add_action( 'template_redirect', function () {
 add_filter( 'woocommerce_get_query_vars', function ( $vars ) {
 	$vars['saved-builds'] = 'saved-builds';
 	$vars['rma-tickets']  = 'rma-tickets';
+	$vars['wishlist']     = 'wishlist';
 	return $vars;
 } );
 

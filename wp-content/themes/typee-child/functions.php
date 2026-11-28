@@ -24,6 +24,7 @@ require_once TYPEE_CHILD_DIR . '/inc/catalog.php';
 require_once TYPEE_CHILD_DIR . '/inc/single-product.php';
 require_once TYPEE_CHILD_DIR . '/inc/search.php';
 require_once TYPEE_CHILD_DIR . '/inc/tracking-warranty.php';
+require_once TYPEE_CHILD_DIR . '/inc/account.php';
 
 /**
  * CSS & JS.
@@ -80,6 +81,10 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( function_exists( 'is_checkout' ) && is_checkout() ) {
 		typee_style( 'typee-checkout', 'checkout.css' );
 		wp_enqueue_script( 'typee-checkout', TYPEE_CHILD_URI . '/assets/js/checkout.js', array( 'jquery', 'typee-main' ), typee_asset_ver( 'js/checkout.js' ), true );
+	}
+	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+		typee_style( 'typee-account', 'account.css', array( 'typee-base', 'typee-components' ) );
+		wp_enqueue_script( 'typee-account', TYPEE_CHILD_URI . '/assets/js/account.js', array( 'typee-main' ), typee_asset_ver( 'js/account.js' ), true );
 	}
 
 	wp_enqueue_script( 'typee-main', TYPEE_CHILD_URI . '/assets/js/main.js', array( 'jquery' ), typee_asset_ver( 'js/main.js' ), true );

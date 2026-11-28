@@ -88,6 +88,8 @@ function typee_url( $key ) {
 			'guides'       => home_url( '/modding-guides/' ),
 			'search'       => home_url( '/search/' ),
 			'saved_builds' => function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'saved-builds' ) : '',
+			'rma_tickets'  => function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'rma-tickets' ) : '',
+			'wishlist'     => function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'wishlist' ) : '',
 			'blog'         => home_url( '/modding-guides/' ),
 			'faq'          => home_url( '/modding-guides/' ),
 			'privacy'    => get_privacy_policy_url(),
